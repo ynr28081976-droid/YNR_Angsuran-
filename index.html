@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>YNR Angsuran Toko Baju</title>
+
+    <!-- 🌟 DUKUNGAN IKON APLIKASI ANDROID / PWA (LATAR PUTIH) 🌟 -->
+    <link rel="icon" type="image/png" sizes="512x512" href="android_icon_white_512x512.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="android_icon_white_512x512.png">
+    <meta name="theme-color" content="#ffffff">
+
     <style>
         :root {
             --bg-app: #0b0f19;
@@ -28,7 +34,9 @@
 
         /* Top Bar Styling */
         .app-bar { display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 16px; border-radius: 20px; box-shadow: var(--shadow-premium); margin-bottom: 20px; border: 1px solid var(--border-color); }
-        .app-bar h1 { font-size: 16px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(135deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .app-bar-brand { display: flex; align-items: center; gap: 10px; }
+        .app-bar-logo { width: 36px; height: 36px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border-color); }
+        .app-bar h1 { font-size: 15px; font-weight: 800; letter-spacing: -0.3px; background: linear-gradient(135deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .sync-badge { font-size: 11px; padding: 4px 12px; border-radius: 20px; font-weight: 700; background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
         .btn-sync-icon { background: rgba(99, 102, 241, 0.1); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.2); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; transition: all 0.2s; }
         .btn-sync-icon:active { transform: rotate(180deg); background: rgba(99, 102, 241, 0.2); }
@@ -128,6 +136,12 @@
                 padding: 0px 2px 5px 2px; 
                 margin: 0 !important;
                 text-transform: uppercase; 
+            }
+            .p-logo {
+                width: 32px;
+                height: 32px;
+                margin: 0 auto 4px auto;
+                display: block !important;
             }
             .p-center { 
                 text-align: center; 
@@ -241,8 +255,12 @@
     </div>
 
     <div class="container">
+        <!-- TOP BAR DENGAN INTEGRASI LOGO TOKO YNR -->
         <div class="app-bar">
-            <h1>🛍️ YNR ANGSURAN TOKO BAJU</h1>
+            <div class="app-bar-brand">
+                <img src="android_icon_white_512x512.png" alt="Logo YNR" class="app-bar-logo">
+                <h1>YNR ANGSURAN TOKO BAJU</h1>
+            </div>
             <div style="display:flex; align-items:center; gap:10px;">
                 <span id="syncIndicator" class="sync-badge">ONLINE</span>
                 <button class="btn-sync-icon" onclick="ambilDataDariCloud()">🔄</button>
@@ -448,7 +466,7 @@
             const container = document.getElementById('actionOptionsContainer');
             container.innerHTML = `
                 <div class="opt-row opt-edit" onclick="tutupSheet('actionSheet'); isiDataKeFormulir(${p.rowNum});">✏️ Modifikasi Data Profil</div>
-                <div class="opt-row opt-print" onclick="tutupSheet('actionSheet'); printStrukKasir(${p.rowNum}, null, null);">𖖛️ Cetak Ulang Struk Thermal</div>
+                <div class="opt-row opt-print" onclick="tutupSheet('actionSheet'); printStrukKasir(${p.rowNum}, null, null);">𖖛️️ Cetak Ulang Struk Thermal</div>
                 <div class="opt-row opt-del" onclick="tutupSheet('actionSheet'); hapusBarisPelanggan(${p.rowNum});">🗑️ Hapus Rekor Permanen</div>
             `;
             bukaSheet('actionSheet');
@@ -512,6 +530,7 @@
             const hitungCicilan = nominalBayar !== null ? (p.cicilanKe + 1) : p.cicilanKe;
 
             document.getElementById('areaCetakStruk').innerHTML = `
+                <img src="android_icon_white_512x512.png" alt="Logo" class="p-logo">
                 <div class="p-center">YNR TOKO BAJU</div>
                 <div class="p-line">======================</div>
                 <div class="p-row"><span>TGL: ${tanggal}</span> <span>KE: ${hitungCicilan}X</span></div>
