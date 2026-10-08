@@ -114,7 +114,7 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(150px); } to { transform: translateY(0); } }
 
-        /* THERMAL PRINT ENGINE 58MM FULL CENTER */
+        /* THERMAL PRINT ENGINE 58MM FULL CENTER & EXTRA BOLD */
         @page { 
             size: 58mm auto; 
             margin: 0mm !important; 
@@ -128,6 +128,8 @@
                 padding: 0 !important;
                 width: 100% !important;
                 height: auto !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
             
             body > *:not(#areaCetakStruk) { 
@@ -146,10 +148,10 @@
                 width: 100% !important;
                 max-width: 58mm !important;
                 margin: 0 auto !important;
-                padding: 2mm 1mm !important;
+                padding: 1mm 0mm !important;
                 color: #000000 !important; 
-                font-family: 'Courier New', Courier, monospace; 
-                font-size: 10.5pt !important; 
+                font-family: 'Arial Black', 'Impact', 'Courier New', monospace; 
+                font-size: 12pt !important; 
                 line-height: 1.25 !important; 
                 font-weight: 900 !important; 
                 text-transform: uppercase; 
@@ -162,15 +164,15 @@
             .p-center { 
                 text-align: center !important; 
                 font-weight: 900 !important; 
-                font-size: 12pt !important; 
-                margin-bottom: 4px !important; 
+                font-size: 14pt !important; 
+                margin-bottom: 2px !important; 
             }
 
             .p-line { 
                 font-weight: 900 !important;
-                margin: 3px 0 !important;
+                margin: 2px 0 !important;
                 text-align: center !important;
-                font-size: 10pt !important;
+                font-size: 11pt !important;
                 letter-spacing: -1px;
             }
 
@@ -178,15 +180,15 @@
                 text-align: center !important; 
                 font-weight: 900 !important; 
                 margin-bottom: 3px !important; 
-                font-size: 10.5pt !important; 
+                font-size: 12pt !important; 
             }
 
             .p-logo-print {
-                width: 30mm !important; 
+                width: 36mm !important; 
                 height: auto;
-                max-height: 20mm !important;
+                max-height: 24mm !important;
                 object-fit: contain;
-                margin: 0 auto 4px auto !important;
+                margin: 0 auto 2px auto !important;
                 display: block !important;
             }
         }
