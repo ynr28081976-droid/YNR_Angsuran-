@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>YNR Angsuran Toko Baju</title>
-    <!-- Pustaka untuk ubah HTML ke Gambar PNG -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --bg-app: #0b0f19;
@@ -92,18 +90,22 @@
         .input-group input:focus { border-color: #6366f1; background: #1e293b; box-shadow: var(--shadow-glow); }
         .live-banner { background: rgba(99, 102, 241, 0.1); border: 1px dashed rgba(99, 102, 241, 0.3); padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; color: #a5b4fc; text-align: center; }
 
-        /* Coin Box Grid */
+        /* Pay Sheet Custom Input & Grid */
+        .manual-pay-box { display: flex; gap: 8px; margin-bottom: 14px; }
+        .manual-pay-input { flex: 1; background: var(--surface-card); border: 1px solid var(--border-color); padding: 12px 14px; border-radius: 14px; font-size: 14px; font-weight: 700; color: #fff; outline: none; }
+        .manual-pay-input:focus { border-color: #6366f1; }
+        .btn-submit-pay { background: var(--gradient-primary); color: white; border: none; padding: 0 16px; border-radius: 14px; font-weight: 700; font-size: 13px; cursor: pointer; }
+
         .pay-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
         .btn-coin { background: var(--surface-card); border: 1px solid var(--border-color); padding: 14px 8px; border-radius: 14px; font-weight: 700; font-size: 13px; color: #e2e8f0; text-align: center; cursor: pointer; transition: all 0.15s; }
         .btn-coin:active:not(:disabled) { background: #6366f1; border-color: #6366f1; }
         .btn-coin:disabled { opacity: 0.2; cursor: not-allowed; }
-        .btn-coin-lunas { grid-column: span 3; background: var(--gradient-emerald); color: white; border: none; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 13px; text-align: center; margin-top: 6px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+        .btn-coin-lunas { grid-column: span 3; background: var(--gradient-emerald); color: white; border: none; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 13px; text-align: center; margin-top: 6px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); cursor: pointer; }
 
         /* Action Menu */
         .opt-row { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 14px; font-weight: 700; font-size: 13px; margin-bottom: 10px; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; }
         .opt-edit { background: rgba(251, 191, 36, 0.08); color: #fbbf24; border-color: rgba(251, 191, 36, 0.15); }
         .opt-print { background: rgba(99, 102, 241, 0.08); color: #818cf8; border-color: rgba(99, 102, 241, 0.15); }
-        .opt-download { background: rgba(16, 185, 129, 0.08); color: #34d399; border-color: rgba(16, 185, 129, 0.15); }
         .opt-del { background: rgba(244, 63, 94, 0.08); color: #f43f5e; border-color: rgba(244, 63, 94, 0.15); }
         .opt-row:active { transform: scale(0.98); }
 
@@ -112,46 +114,10 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(150px); } to { transform: translateY(0); } }
 
-        /* AREA STRUK KASIR TEMPORARY */
-        #areaCetakStruk {
-            position: absolute;
-            left: -9999px;
-            top: -9999px;
-            width: 280px;
-            background: #ffffff;
-            color: #000000;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 11px;
-            line-height: 1.3;
-            font-weight: 900;
-            padding: 10px;
-            box-sizing: border-box;
-            text-transform: uppercase;
-        }
-
-        .p-watermark-wrapper {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            z-index: 1; pointer-events: none;
-        }
-        .p-watermark-logo {
-            width: 130px; height: auto;
-            opacity: 0.15; display: block;
-        }
-        .p-content {
-            position: relative; z-index: 2;
-            display: flex; flex-direction: column;
-        }
-        .p-center { text-align: center; font-weight: 900; font-size: 12px; margin-bottom: 2px; }
-        .p-line { font-weight: 900; margin: 2px 0; text-align: center; letter-spacing: -1px; font-size: 10px; }
-        .p-row { display: flex; justify-content: space-between; align-items: center; font-weight: 900; margin-bottom: 2px; width: 100%; white-space: nowrap; }
-
-        /* METODE KHUSUS PRINT: OTOMATIS PORTRAIT & PAS 1 HALAMAN */
+        /* COMPACT THERMAL PRINT ENGINE (OPTIMIZED FOR 1 PAGE) */
         @page { 
-            size: portrait; /* Memaksa orientasi tegak (potret) */
-            margin: 0mm;    /* Menghilangkan margin bawaan printer */
+            size: auto; 
+            margin: 0mm !important; 
         }
         
         @media print {
@@ -159,12 +125,15 @@
                 background: #ffffff !important; 
                 color: #000000 !important; 
                 margin: 0 !important; 
-                padding: 0 !important; 
+                padding: 0 !important;
                 width: 100% !important;
-                height: 100% !important;
-                overflow: hidden !important; 
+                height: auto !important;
+                overflow: hidden !important;
             }
-            body * { display: none !important; }
+            
+            body > *:not(#areaCetakStruk) { 
+                display: none !important; 
+            }
             
             #areaCetakStruk, #areaCetakStruk * { 
                 display: block !important; 
@@ -172,28 +141,62 @@
             }
             
             #areaCetakStruk { 
-                position: absolute !important; 
-                left: 0 !important; 
-                top: 0 !important;
-                width: 100% !important;
-                max-width: 58mm !important; /* Pas untuk ukuran kertas thermal standar 58mm/60mm */
-                font-size: 8pt !important; 
-                line-height: 1.2 !important; 
-                padding: 3mm !important;
+                position: relative !important; 
+                top: 0;
+                left: 0;
+                width: 58mm !important;
+                max-width: 100% !important;
+                margin: 0 auto !important;
+                padding: 4px 6px !important;
+                color: #000000 !important; 
+                font-family: 'Courier New', Courier, monospace; 
+                font-size: 9pt !important; 
+                line-height: 1.15 !important; 
+                font-weight: bold !important; 
+                text-transform: uppercase; 
                 box-sizing: border-box !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
             }
-            .p-watermark-logo { width: 25mm !important; }
-            .p-center { font-size: 9pt !important; }
-            .p-line { font-size: 8pt !important; }
-            .p-row { display: flex !important; justify-content: space-between !important; }
+
+            .p-center { 
+                text-align: center; 
+                font-weight: 900 !important; 
+                font-size: 10pt !important; 
+                margin-bottom: 2px; 
+            }
+
+            .p-line { 
+                font-weight: 900 !important;
+                margin: 2px 0 !important;
+                text-align: center;
+                letter-spacing: -1px;
+                font-size: 8pt;
+            }
+
+            .p-row { 
+                display: flex !important; 
+                justify-content: space-between !important; 
+                font-weight: bold !important; 
+                margin-bottom: 1px !important; 
+                text-align: left; 
+                font-size: 8.5pt !important;
+            }
+
+            .p-logo-print {
+                width: 22mm !important; 
+                height: auto;
+                max-height: 14mm !important;
+                object-fit: contain;
+                margin: 0 auto 3px auto !important;
+                display: block !important;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div id="areaCetakStruk"></div>
+    <div id="areaCetakStruk" style="display: none;"></div>
 
     <button class="fab-add" onclick="bukaFormTambah()">＋</button>
 
@@ -203,7 +206,18 @@
                 <h3 id="paySheetNama">💸 Pembayaran Instan</h3>
                 <button class="btn-close-sheet" onclick="tutupSheet('paySheet')">✕</button>
             </div>
-            <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">Sisa Tunggakan: <strong id="paySheetSisa" style="color:#f43f5e">Rp 0</strong></p>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Sisa Tunggakan: <strong id="paySheetSisa" style="color:#f43f5e">Rp 0</strong></p>
+            
+            <!-- Input Ketik Manual Pembayaran -->
+            <div class="input-group" style="margin-bottom:12px;">
+                <label>Nominal Pembayaran Manual (Rp)</label>
+                <div class="manual-pay-box">
+                    <input type="number" id="inputBayarManual" class="manual-pay-input" placeholder="Masukkan jumlah bayar...">
+                    <button class="btn-submit-pay" onclick="prosesBayarInputManual()">Bayar</button>
+                </div>
+            </div>
+
+            <label style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; display:block; margin-bottom:8px;">Pilihan Nominal Cepat</label>
             <div class="pay-grid" id="payButtonContainer"></div>
         </div>
     </div>
@@ -311,6 +325,8 @@
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbxPZdeouvZojZVfTQQO9rYuOe9GReB_u4tvhAz8LfBhehI4brT2BqMpphomeHOYkNK3/exec";
         let cacheDataLokal = [];
+        let activeRowNumPay = null;
+        let activeMaxSisaPay = 0;
 
         function kapitalisasiSmart(input) {
             let kata = input.value.split(" ");
@@ -423,8 +439,12 @@
             const p = cacheDataLokal.find(x => x.rowNum === rowNum);
             if(!p) return;
 
+            activeRowNumPay = rowNum;
+            activeMaxSisaPay = p.sisa;
+
             document.getElementById('paySheetNama').innerText = `💸 Pembayaran: ${p.nama}`;
             document.getElementById('paySheetSisa').innerText = `Rp ${p.sisa.toLocaleString('id-ID')}`;
+            document.getElementById('inputBayarManual').value = "";
 
             const container = document.getElementById('payButtonContainer');
             container.innerHTML = "";
@@ -448,6 +468,19 @@
             bukaSheet('paySheet');
         }
 
+        function prosesBayarInputManual() {
+            const nominalInput = parseInt(document.getElementById('inputBayarManual').value) || 0;
+            if (nominalInput <= 0) {
+                alert("Masukkan nominal pembayaran yang valid!");
+                return;
+            }
+            if (nominalInput > activeMaxSisaPay) {
+                alert(`Nominal tidak boleh melebihi sisa utang (Rp ${activeMaxSisaPay.toLocaleString('id-ID')})`);
+                return;
+            }
+            eksekusiBayarOtomatis(activeRowNumPay, nominalInput, activeMaxSisaPay);
+        }
+
         function bukaMenuOpsiLainnya(rowNum) {
             const p = cacheDataLokal.find(x => x.rowNum === rowNum);
             if(!p) return;
@@ -457,7 +490,6 @@
             container.innerHTML = `
                 <div class="opt-row opt-edit" onclick="tutupSheet('actionSheet'); isiDataKeFormulir(${p.rowNum});">✏️ Modifikasi Data Profil</div>
                 <div class="opt-row opt-print" onclick="tutupSheet('actionSheet'); printStrukKasir(${p.rowNum}, null, null);">𖖛️ Cetak Ulang Struk Thermal</div>
-                <div class="opt-row opt-download" onclick="tutupSheet('actionSheet'); downloadGambarStruk(${p.rowNum}, null, null);">📥 Download Gambar Struk (PNG)</div>
                 <div class="opt-row opt-del" onclick="tutupSheet('actionSheet'); hapusBarisPelanggan(${p.rowNum});">🗑️ Hapus Rekor Permanen</div>
             `;
             bukaSheet('actionSheet');
@@ -512,61 +544,29 @@
             } catch (err) { alert("Sinkronisasi Ditolak Cloud."); }
         }
 
-        // GENERATE STRUK HTML
-        function siapkanElemenStruk(rowNum, nominalBayar = null, sisaBaru = null) {
+        function printStrukKasir(rowNum, nominalBayar = null, sisaBaru = null) {
             const p = cacheDataLokal.find(x => x.rowNum === rowNum);
-            if(!p) return null;
+            if(!p) return;
 
             const tanggal = new Date().toLocaleDateString('id-ID', { year: '2-digit', month: '2-digit', day: '2-digit' });
             const sisaAkhir = sisaBaru !== null ? parseInt(sisaBaru) : p.sisa;
             const hitungCicilan = nominalBayar !== null ? (p.cicilanKe + 1) : p.cicilanKe;
 
-            const target = document.getElementById('areaCetakStruk');
-            target.innerHTML = `
-                <div class="p-watermark-wrapper">
-                    <img src="https://lh3.googleusercontent.com/d/10_-FuQ11LYbaE_bf-6WI46sx8pUgerNq" class="p-watermark-logo" crossorigin="anonymous">
+            document.getElementById('areaCetakStruk').innerHTML = `
+                <div class="p-center">
+                    <img src="https://lh3.googleusercontent.com/d/10_-FuQ11LYbaE_bf-6WI46sx8pUgerNq" class="p-logo-print">
+                    YNR TOKO BAJU
                 </div>
-                <div class="p-content">
-                    <div class="p-center">YNR TOKO BAJU</div>
-                    <div class="p-line">-----------------------------</div>
-                    <div class="p-row"><span>TGL: ${tanggal}</span><span>KE: ${hitungCicilan}X</span></div>
-                    <div class="p-row"><span>NAMA: ${bersihkanSimbol(p.nama.substring(0,12))}</span></div>
-                    <div class="p-row"><span>BRG : ${bersihkanSimbol(p.barang.substring(0,12))}</span></div>
-                    <div class="p-line">-----------------------------</div>
-                    <div class="p-row"><span>HARGA JUAL</span><span>RP ${p.total.toLocaleString('id-ID')}</span></div>
-                    <div class="p-row"><span>ANGSURAN</span><span>RP ${(nominalBayar || 0).toLocaleString('id-ID')}</span></div>
-                    <div class="p-row"><span>SISA PIUTANG</span><span>RP ${sisaAkhir.toLocaleString('id-ID')}</span></div>
-                </div>
+                <div class="p-line">======================</div>
+                <div class="p-row"><span>TGL: ${tanggal}</span> <span>KE: ${hitungCicilan}X</span></div>
+                <div class="p-row"><span>NAMA: ${bersihkanSimbol(p.nama.substring(0,14))}</span></div>
+                <div class="p-row"><span>BRG : ${bersihkanSimbol(p.barang.substring(0,14))}</span></div>
+                <div class="p-line">======================</div>
+                <div class="p-row"><span>HARGA JUAL</span> <span>: RP ${p.total.toLocaleString('id-ID')}</span></div>
+                <div class="p-row"><span>ANGSURAN</span> <span>: RP ${(nominalBayar || 0).toLocaleString('id-ID')}</span></div>
+                <div class="p-row"><span>SISA PIUTANG</span> <span>: RP ${sisaAkhir.toLocaleString('id-ID')}</span></div>
             `;
-            return { p, tanggal };
-        }
-
-        // PRINT STRUK (Otomatis Portrait & Pas 1 Halaman)
-        function printStrukKasir(rowNum, nominalBayar = null, sisaBaru = null) {
-            if(siapkanElemenStruk(rowNum, nominalBayar, sisaBaru)) {
-                setTimeout(() => { window.print(); }, 200);
-            }
-        }
-
-        // DOWNLOAD GAMBAR STRUK (PNG HD)
-        function downloadGambarStruk(rowNum, nominalBayar = null, sisaBaru = null) {
-            const info = siapkanElemenStruk(rowNum, nominalBayar, sisaBaru);
-            if(!info) return;
-
-            const target = document.getElementById('areaCetakStruk');
-            
-            html2canvas(target, {
-                useCORS: true,
-                scale: 3,
-                backgroundColor: "#ffffff"
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `Struk_${info.p.nama.replace(/\s+/g, '_')}.png`;
-                link.href = canvas.toDataURL("image/png");
-                link.click();
-            }).catch(err => {
-                alert("Gagal mengunduh gambar struk.");
-            });
+            setTimeout(() => { window.print(); }, 200);
         }
 
         async function hapusBarisPelanggan(rowNum) {
