@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>YNR Angsuran Toko Baju</title>
+    <!-- Library html2canvas untuk mengubah HTML Struk menjadi Gambar -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --bg-app: #0b0f19;
@@ -106,6 +108,7 @@
         .opt-row { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 14px; font-weight: 700; font-size: 13px; margin-bottom: 10px; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; }
         .opt-edit { background: rgba(251, 191, 36, 0.08); color: #fbbf24; border-color: rgba(251, 191, 36, 0.15); }
         .opt-print { background: rgba(99, 102, 241, 0.08); color: #818cf8; border-color: rgba(99, 102, 241, 0.15); }
+        .opt-wa { background: rgba(16, 185, 129, 0.08); color: #34d399; border-color: rgba(16, 185, 129, 0.15); }
         .opt-del { background: rgba(244, 63, 94, 0.08); color: #f43f5e; border-color: rgba(244, 63, 94, 0.15); }
         .opt-row:active { transform: scale(0.98); }
 
@@ -114,111 +117,69 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(150px); } to { transform: translateY(0); } }
 
-        /* THERMAL PRINT ENGINE 58MM - TEBAL & DENGAN LOGO WATERMARK DI TENGAH */
-        @page { 
-            size: 58mm auto; 
-            margin: 0mm !important; 
+        /* AREA STRUK TEMPORARY UTK GENERATE GAMBAR DAN PRINT */
+        #areaCetakStruk {
+            position: fixed;
+            left: -9999px;
+            top: -9999px;
+            width: 320px;
+            background: #ffffff;
+            color: #000000;
+            padding: 15px;
+            font-family: 'Arial Black', 'Impact', Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.3;
+            font-weight: 900;
+            text-transform: uppercase;
+            box-sizing: border-box;
+            text-align: left;
         }
+
+        /* LOGO WATERMARK DI TENGAH STRUK */
+        #areaCetakStruk::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            background-image: url('https://lh3.googleusercontent.com/d/10_-FuQ11LYbaE_bf-6WI46sx8pUgerNq');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.18;
+            z-index: 0;
+        }
+
+        #areaCetakStruk * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .p-header { text-align: center; font-weight: 900; font-size: 14pt; margin-bottom: 8px; letter-spacing: 0.5px; }
+        .p-row { text-align: left; font-weight: 900; margin-bottom: 4px; font-size: 10.5pt; white-space: nowrap; }
+        .p-footer { text-align: center; font-weight: 900; font-size: 10pt; margin-top: 8px; }
+        .p-spacer { height: 6px; }
+
+        /* THERMAL PRINT ENGINE 58MM */
+        @page { size: 58mm auto; margin: 0mm !important; }
         
         @media print {
-            html, body { 
-                background: #ffffff !important; 
-                color: #000000 !important; 
-                margin: 0 !important; 
-                padding: 0 !important;
-                width: 100% !important;
-                height: auto !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            
-            body > *:not(#areaCetakStruk) { 
-                display: none !important; 
-            }
-            
-            #areaCetakStruk, #areaCetakStruk * { 
-                display: block !important; 
-                visibility: visible !important; 
-            }
-            
+            html, body { background: #ffffff !important; color: #000000 !important; margin: 0 !important; padding: 0 !important; width: 100% !important; }
+            body > *:not(#areaCetakStruk) { display: none !important; }
             #areaCetakStruk { 
-                position: relative !important; 
-                top: 0;
-                left: 0;
-                width: 100% !important;
-                max-width: 58mm !important;
-                margin: 0 auto !important;
-                padding: 2mm 0mm !important;
-                color: #000000 !important; 
-                font-family: 'Arial Black', 'Impact', 'Segoe UI Black', Arial, sans-serif !important;
-                font-size: 11pt !important; 
-                line-height: 1.3 !important; 
-                font-weight: 900 !important; 
-                text-transform: uppercase; 
-                box-sizing: border-box !important;
-                text-align: left !important;
-                page-break-inside: avoid !important;
-                break-inside: avoid !important;
-                border: none !important;
-                box-shadow: none !important;
+                position: relative !important; left: 0 !important; top: 0 !important;
+                width: 100% !important; max-width: 58mm !important; margin: 0 auto !important; padding: 2mm 0mm !important;
                 -webkit-text-stroke: 0.4px #000000;
-            }
-
-            /* LOGO WATERMARK DI TENGAH STRUK */
-            #areaCetakStruk::before {
-                content: "";
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 42mm;
-                height: 42mm;
-                background-image: url('https://lh3.googleusercontent.com/d/10_-FuQ11LYbaE_bf-6WI46sx8pUgerNq');
-                background-size: contain;
-                background-repeat: no-repeat;
-                background-position: center;
-                opacity: 0.18;
-                z-index: -1;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-
-            .p-header { 
-                text-align: center !important; 
-                font-weight: 900 !important; 
-                font-size: 14pt !important; 
-                margin-bottom: 8px !important; 
-                letter-spacing: 0.5px !important;
-                -webkit-text-stroke: 0.6px #000000;
-            }
-
-            .p-row { 
-                text-align: left !important; 
-                font-weight: 900 !important; 
-                margin-bottom: 4px !important; 
-                font-size: 10.5pt !important; 
-                white-space: nowrap !important;
-                letter-spacing: -0.2px !important;
-            }
-
-            .p-footer {
-                text-align: center !important;
-                font-weight: 900 !important;
-                font-size: 10pt !important;
-                margin-top: 8px !important;
-                -webkit-text-stroke: 0.4px #000000;
-            }
-
-            .p-spacer {
-                height: 6px !important;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- Container area cetak struk -->
-    <div id="areaCetakStruk" style="display: none;"></div>
+    <!-- Container area cetak & tangkap gambar struk -->
+    <div id="areaCetakStruk"></div>
 
     <button class="fab-add" onclick="bukaFormTambah()">＋</button>
 
@@ -230,7 +191,6 @@
             </div>
             <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Sisa Tunggakan: <strong id="paySheetSisa" style="color:#f43f5e">Rp 0</strong></p>
             
-            <!-- Input Ketik Manual Pembayaran -->
             <div class="input-group" style="margin-bottom:12px;">
                 <label>Nominal Pembayaran Manual (Rp)</label>
                 <div class="manual-pay-box">
@@ -512,6 +472,7 @@
             container.innerHTML = `
                 <div class="opt-row opt-edit" onclick="tutupSheet('actionSheet'); isiDataKeFormulir(${p.rowNum});">✏️ Modifikasi Data Profil</div>
                 <div class="opt-row opt-print" onclick="tutupSheet('actionSheet'); printStrukKasir(${p.rowNum});">𖖛️ Cetak Ulang Struk Thermal</div>
+                <div class="opt-row opt-wa" onclick="tutupSheet('actionSheet'); bagikanStrukGambarWA(${p.rowNum});">📲 Kirim Struk Gambar ke WA</div>
                 <div class="opt-row opt-del" onclick="tutupSheet('actionSheet'); hapusBarisPelanggan(${p.rowNum});">🗑️ Hapus Rekor Permanen</div>
             `;
             bukaSheet('actionSheet');
@@ -532,7 +493,6 @@
                 
                 if (result.error) return alert(result.error);
                 
-                // Simpan nominal pembayaran terakhir di cache lokal
                 const p = cacheDataLokal.find(x => x.rowNum === rowNum);
                 if (p) p.bayarTerakhir = nominal;
 
@@ -570,15 +530,13 @@
             } catch (err) { alert("Sinkronisasi Ditolak Cloud."); }
         }
 
-        /* FUNGSI CETAK STRUK THERMAL 58MM */
-        function printStrukKasir(rowNum, nominalBayar = null, sisaBaru = null) {
+        function siapkanAreaStrukHTML(rowNum, nominalBayar = null, sisaBaru = null) {
             const p = cacheDataLokal.find(x => x.rowNum === rowNum);
-            if(!p) return;
+            if(!p) return null;
 
             const tanggal = new Date().toLocaleDateString('id-ID', { year: '2-digit', month: '2-digit', day: '2-digit' });
             const sisaAkhir = sisaBaru !== null ? parseInt(sisaBaru) : p.sisa;
             
-            // Menggunakan nominal bayar baru, nominal bayar terakhir, atau estimasi cicilan per sesi
             let nominalCetak = 0;
             if (nominalBayar !== null) {
                 nominalCetak = nominalBayar;
@@ -590,7 +548,8 @@
 
             const hitungCicilan = nominalBayar !== null ? (p.cicilanKe + 1) : p.cicilanKe;
 
-            document.getElementById('areaCetakStruk').innerHTML = `
+            const area = document.getElementById('areaCetakStruk');
+            area.innerHTML = `
                 <div class="p-header">YNR TOKO BAJU</div>
                 <div class="p-row">TGL : ${tanggal}</div>
                 <div class="p-row">KE  : ${hitungCicilan}X</div>
@@ -602,9 +561,61 @@
                 <div class="p-row">SISA PIUTANG: RP ${sisaAkhir.toLocaleString('id-ID')}</div>
                 <div class="p-spacer"></div>
                 <div class="p-footer">BUKTI PEMBAYARAN</div>
-                <div class="p-footer">SIMPAN SLIP INI</div>
             `;
-            setTimeout(() => { window.print(); }, 200);
+            return p;
+        }
+
+        /* FUNGSI CETAK STRUK THERMAL 58MM */
+        function printStrukKasir(rowNum, nominalBayar = null, sisaBaru = null) {
+            if(siapkanAreaStrukHTML(rowNum, nominalBayar, sisaBaru)) {
+                setTimeout(() => { window.print(); }, 200);
+            }
+        }
+
+        /* FUNGSI BAGIKAN STRUK BERBENTUK GAMBAR KE WA */
+        async function bagikanStrukGambarWA(rowNum) {
+            const p = siapkanAreaStrukHTML(rowNum);
+            if(!p) return;
+
+            document.getElementById('loadingText').style.display = "block";
+
+            try {
+                const area = document.getElementById('areaCetakStruk');
+                
+                // Konversi elemen HTML struk menjadi Canvas Gambar
+                const canvas = await html2canvas(area, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: "#ffffff"
+                });
+
+                canvas.toBlob(async (blob) => {
+                    const file = new File([blob], `Struk_${p.nama}.png`, { type: 'image/png' });
+
+                    // Memeriksa fitur bawaan HP untuk langsung share file gambar
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            title: `Struk Angsuran ${p.nama}`,
+                            text: `Halo *${p.nama}*, berikut adalah bukti pembayaran angsuran dari YNR Toko Baju. Sisa piutang Anda: *Rp ${p.sisa.toLocaleString('id-ID')}*. Terima kasih!`,
+                            files: [file]
+                        });
+                    } else {
+                        // Opsi Alternatif: Download Gambar & Buka WhatsApp
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = `Struk_${p.nama}.png`;
+                        link.click();
+
+                        const pesanWA = encodeURIComponent(`Halo *${p.nama}*, berikut bukti pembayaran angsuran YNR Toko Baju. Sisa piutang Anda: *Rp ${p.sisa.toLocaleString('id-ID')}*.\n\n_(Gambar struk otomatis terunduh di HP Anda, silakan lampirkan gambar tersebut)_`);
+                        window.open(`https://wa.me/?text=${pesanWA}`, '_blank');
+                    }
+                    document.getElementById('loadingText').style.display = "none";
+                }, 'image/png');
+
+            } catch (err) {
+                alert("Gagal membuat gambar struk.");
+                document.getElementById('loadingText').style.display = "none";
+            }
         }
 
         async function hapusBarisPelanggan(rowNum) {
