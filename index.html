@@ -26,7 +26,59 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-app); color: var(--text-main); font-size: 14px; padding-bottom: 90px; }
-        .container { padding: 16px; max-width: 480px; margin: 0 auto; }
+        .container { padding: 16px; max-width: 480px; margin: 0 auto; display: none; } /* Disembunyikan sampai login */
+
+        /* LOGIN SCREEN STYLING */
+        #loginScreen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-app);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+        .login-card {
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            padding: 28px 24px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+            box-shadow: var(--shadow-premium);
+        }
+        .login-logo { width: 70px; height: 70px; border-radius: 18px; margin-bottom: 14px; object-fit: cover; }
+        .login-card h2 { font-size: 18px; font-weight: 800; margin-bottom: 6px; background: linear-gradient(135deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .login-card p { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+        .login-input {
+            width: 100%;
+            background: var(--surface-card);
+            border: 1px solid var(--border-color);
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 16px;
+            color: #fff;
+            text-align: center;
+            letter-spacing: 4px;
+            outline: none;
+            margin-bottom: 14px;
+        }
+        .login-input:focus { border-color: #6366f1; box-shadow: var(--shadow-glow); }
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            border: none;
+            background: var(--gradient-primary);
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        .login-error { color: #f43f5e; font-size: 11px; margin-top: 10px; display: none; font-weight: 600; }
 
         /* Top Bar Styling */
         .app-bar { display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 16px; border-radius: 20px; box-shadow: var(--shadow-premium); margin-bottom: 20px; border: 1px solid var(--border-color); }
@@ -75,7 +127,7 @@
         .btn-m-menu { background: var(--surface-card); color: #cbd5e1; border: 1px solid var(--border-color); max-width: 65px; font-size: 13px; }
 
         /* FAB */
-        .fab-add { position: fixed; bottom: 24px; right: 24px; width: 60px; height: 60px; background: var(--gradient-primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45); border: none; z-index: 99; cursor: pointer; }
+        .fab-add { position: fixed; bottom: 24px; right: 24px; width: 60px; height: 60px; background: var(--gradient-primary); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45); border: none; z-index: 99; cursor: pointer; }
 
         /* BOTTOM SHEET */
         .bottom-sheet { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 15, 25, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: none; align-items: flex-end; justify-content: center; z-index: 1000; animation: fadeIn 0.2s ease; }
@@ -127,7 +179,7 @@
             color: #000000;
             padding: 10px 12px;
             font-family: 'Arial Black', 'Impact', Arial, sans-serif;
-            font-size: 9.5pt; /* Ukuran teks diperkecil sedikit */
+            font-size: 9.5pt;
             line-height: 1.25;
             font-weight: 900;
             text-transform: uppercase;
@@ -135,7 +187,6 @@
             text-align: left;
         }
 
-        /* LOGO WATERMARK DI TENGAH STRUK */
         #areaCetakStruk::before {
             content: "";
             position: absolute;
@@ -152,19 +203,13 @@
             z-index: 0;
         }
 
-        #areaCetakStruk * {
-            position: relative;
-            z-index: 1;
-        }
-
+        #areaCetakStruk * { position: relative; z-index: 1; }
         .p-header { text-align: center; font-weight: 900; font-size: 12pt; margin-bottom: 6px; letter-spacing: 0.5px; }
         .p-row { text-align: left; font-weight: 900; margin-bottom: 3px; font-size: 9pt; white-space: nowrap; }
         .p-footer { text-align: center; font-weight: 900; font-size: 8.5pt; margin-top: 6px; }
         .p-spacer { height: 4px; }
 
-        /* THERMAL PRINT ENGINE 58MM */
         @page { size: 58mm auto; margin: 0mm !important; }
-        
         @media print {
             html, body { background: #ffffff !important; color: #000000 !important; margin: 0 !important; padding: 0 !important; width: 100% !important; }
             body > *:not(#areaCetakStruk) { display: none !important; }
@@ -178,10 +223,22 @@
 </head>
 <body>
 
-    <!-- Container area cetak & tangkap gambar struk -->
+    <!-- SCREEN LOGIN -->
+    <div id="loginScreen">
+        <div class="login-card">
+            <img src="https://lh3.googleusercontent.com/d/10_-FuQ11LYbaE_bf-6WI46sx8pUgerNq" alt="Logo" class="login-logo">
+            <h2>YNR TOKO BAJU</h2>
+            <p>Masukkan PIN untuk membuka sistem</p>
+            <input type="password" id="inputPin" class="login-input" placeholder="••••" maxlength="8" onkeyup="if(event.key==='Enter') verifikasiLogin()">
+            <button class="btn-login" onclick="verifikasiLogin()">🔓 Masuk Aplikasi</button>
+            <div id="loginError" class="login-error">⚠️ PIN yang Anda masukkan salah!</div>
+        </div>
+    </div>
+
+    <!-- Area cetak struk -->
     <div id="areaCetakStruk"></div>
 
-    <button class="fab-add" onclick="bukaFormTambah()">＋</button>
+    <button id="fabAdd" class="fab-add" onclick="bukaFormTambah()">＋</button>
 
     <div id="paySheet" class="bottom-sheet" onclick="tutupSheet('paySheet')">
         <div class="sheet-content" onclick="event.stopPropagation()">
@@ -264,15 +321,16 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="container" id="mainApp">
         <div class="app-bar">
             <div class="app-bar-brand">
                 <img src="https://lh3.googleusercontent.com/d/10_-FuQ11LYbaE_bf-6WI46sx8pUgerNq" alt="Logo YNR" class="app-bar-logo">
                 <h1>YNR ANGSURAN TOKO BAJU</h1>
             </div>
-            <div style="display:flex; align-items:center; gap:10px;">
+            <div style="display:flex; align-items:center; gap:8px;">
                 <span id="syncIndicator" class="sync-badge">ONLINE</span>
-                <button class="btn-sync-icon" onclick="ambilDataDariCloud()">🔄</button>
+                <button class="btn-sync-icon" onclick="ambilDataDariCloud()" title="Refresh">🔄</button>
+                <button class="btn-sync-icon" onclick="logoutSistem()" title="Kunci Aplikasi" style="background:rgba(244,63,94,0.1); color:#f43f5e; border-color:rgba(244,63,94,0.2);">🔒</button>
             </div>
         </div>
 
@@ -306,9 +364,35 @@
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbxPZdeouvZojZVfTQQO9rYuOe9GReB_u4tvhAz8LfBhehI4brT2BqMpphomeHOYkNK3/exec";
+        
+        // BOSQ BISA GANTI PIN LOGIN DI SINI:
+        const PIN_RAHASIA = "1234";
+
         let cacheDataLokal = [];
         let activeRowNumPay = null;
         let activeMaxSisaPay = 0;
+
+        function verifikasiLogin() {
+            const input = document.getElementById('inputPin').value;
+            const err = document.getElementById('loginError');
+
+            if (input === PIN_RAHASIA) {
+                document.getElementById('loginScreen').style.display = "none";
+                document.getElementById('mainApp').style.display = "block";
+                document.getElementById('fabAdd').style.display = "flex";
+                err.style.display = "none";
+                document.getElementById('inputPin').value = "";
+                ambilDataDariCloud();
+            } else {
+                err.style.display = "block";
+            }
+        }
+
+        function logoutSistem() {
+            document.getElementById('mainApp').style.display = "none";
+            document.getElementById('fabAdd').style.display = "none";
+            document.getElementById('loginScreen').style.display = "flex";
+        }
 
         function kapitalisasiSmart(input) {
             let kata = input.value.split(" ");
@@ -565,20 +649,17 @@
             return p;
         }
 
-        /* FUNGSI CETAK STRUK THERMAL 58MM */
         function printStrukKasir(rowNum, nominalBayar = null, sisaBaru = null) {
             if(siapkanAreaStrukHTML(rowNum, nominalBayar, sisaBaru)) {
                 setTimeout(() => { window.print(); }, 200);
             }
         }
 
-        /* FUNGSI KIRIM NOTA FORMAT TEKS LANGSUNG KE WA */
         function kirimStrukTeksWA(rowNum) {
             const p = cacheDataLokal.find(x => x.rowNum === rowNum);
             if(!p) return;
 
             const tanggal = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: '2-digit', day: '2-digit' });
-            
             let nominalCetak = p.bayarTerakhir ? p.bayarTerakhir : (p.tenor > 0 ? Math.ceil(p.total / p.tenor) : 0);
 
             const pesanWA = `*YNR ANGSURAN TOKO BAJU*\n` +
@@ -632,8 +713,6 @@
             document.getElementById('formTitle').innerText = "📝 Tambah Konsumen Baru";
             kalkulasiOtomatisTenor();
         }
-
-        window.onload = function() { ambilDataDariCloud(); };
     </script>
 </body>
 </html>
