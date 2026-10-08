@@ -109,10 +109,15 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(150px); } to { transform: translateY(0); } }
 
-        /* COMPACT THERMAL PRINT ENGINE */
+       /* COMPACT THERMAL PRINT ENGINE */
         @page { size: auto; margin: 0 !important; }
         @media print {
-            html, body { background: #ffffff !important; color: #000000 !important; margin: 0 !important; padding: 0 !important; }
+            html, body { 
+                background: #ffffff !important; 
+                color: #000000 !important; 
+                margin: 0 !important; 
+                padding: 0 !important; 
+            }
             body * { display: none !important; }
             #areaCetakStruk, #areaCetakStruk * { display: block !important; visibility: visible !important; }
             
@@ -120,40 +125,42 @@
                 position: absolute; 
                 left: 0; 
                 top: 0; 
-                width: 44mm; 
+                width: 100%; 
+                max-width: 58mm; /* Sesuaikan dengan lebar kertas printer thermal (misal: 58mm atau 80mm) */
                 color: #000000 !important; 
                 font-family: 'Courier New', Courier, monospace; 
-                font-size: 10.5pt; 
-                line-height: 1.15; 
-                font-weight: 900 !important; 
-                letter-spacing: 0.2px; 
-                padding: 0px 2px 5px 2px; 
-                margin: 0 !important;
+                font-size: 11pt; 
+                line-height: 1.3; 
+                font-weight: bold !important; 
+                padding: 4px; 
+                margin: 0 auto !important;
                 text-transform: uppercase; 
+                text-align: center; /* Membuat seluruh isi teks berada di tengah */
             }
             .p-center { 
                 text-align: center; 
                 font-weight: 900 !important; 
-                font-size: 11pt; 
-                margin-bottom: 2px; 
+                font-size: 12pt; 
+                margin-bottom: 4px; 
             }
             .p-line { 
                 font-weight: 900 !important;
-                margin: 2px 0;
-                letter-spacing: -1px; 
+                margin: 4px 0;
+                text-align: center;
             }
             .p-row { 
                 display: flex; 
                 justify-content: space-between; 
-                font-weight: 900 !important; 
-                margin-bottom: 1px; 
+                font-weight: bold !important; 
+                margin-bottom: 3px; 
+                text-align: left; /* Menjaga baris detail tetap rapi kiri-kanan */
             }
             .p-logo-print {
-                width: 25mm;
+                width: 30mm;
                 height: auto;
-                max-height: 15mm;
+                max-height: 20mm;
                 object-fit: contain;
-                margin: 0 auto 4px auto;
+                margin: 0 auto 6px auto;
                 display: block;
             }
         }
