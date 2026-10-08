@@ -109,7 +109,7 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(150px); } to { transform: translateY(0); } }
 
-        /* FORMAT CETAK PRINTER THERMAL (PAS 1 HALAMAN) */
+        /* FORMAT CETAK PRINTER THERMAL (WATERMARK PRESISI DI TENGAH) */
         @page { 
             size: auto; 
             margin: 0mm !important; 
@@ -120,10 +120,10 @@
                 color: #000000 !important; 
                 margin: 0 !important; 
                 padding: 0 !important; 
-                height: 100%;
-                overflow: hidden;
+                height: auto !important;
             }
             body * { display: none !important; }
+            
             #areaCetakStruk, #areaCetakStruk * { 
                 display: block !important; 
                 visibility: visible !important; 
@@ -131,59 +131,63 @@
             
             #areaCetakStruk { 
                 position: relative !important; 
-                left: 0; 
-                top: 0; 
-                width: 100%; 
-                max-width: 58mm; /* Ukuran lebar standar kertas thermal */
+                left: 0 !important; 
+                top: 0 !important; 
+                width: 100% !important; 
+                max-width: 58mm !important; /* Lebar standar kertas thermal */
                 color: #000000 !important; 
-                font-family: 'Courier New', Courier, monospace; 
-                font-size: 10pt; 
-                line-height: 1.3; 
+                font-family: 'Courier New', Courier, monospace !important; 
+                font-size: 10pt !important; 
+                line-height: 1.3 !important; 
                 font-weight: 900 !important; 
-                padding: 10px 4px; 
+                padding: 8px 4px !important; 
                 margin: 0 auto !important;
-                text-transform: uppercase; 
-                box-sizing: border-box;
-                page-break-inside: avoid;
-                break-inside: avoid;
+                text-transform: uppercase !important; 
+                box-sizing: border-box !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                overflow: hidden !important;
             }
 
-            /* Watermark Logo di Tengah Halaman Struk */
+            /* Watermark Logo kunci tengah secara absolut */
             .p-watermark-logo {
                 position: absolute !important;
                 top: 50% !important;
                 left: 50% !important;
                 transform: translate(-50%, -50%) !important;
-                width: 42mm !important;
+                -webkit-transform: translate(-50%, -50%) !important;
+                width: 40mm !important;
+                max-width: 80% !important;
                 height: auto !important;
-                opacity: 0.15 !important; /* Tingkat kejelasan watermark */
+                opacity: 0.15 !important; /* Kejelasan watermark */
                 z-index: 0 !important;
-                pointer-events: none;
+                pointer-events: none !important;
             }
 
             .p-content {
                 position: relative !important;
                 z-index: 1 !important;
+                background: transparent !important;
             }
 
             .p-center { 
                 text-align: center !important; 
                 font-weight: 900 !important; 
-                font-size: 11pt; 
-                margin-bottom: 2px; 
+                font-size: 11pt !important; 
+                margin-bottom: 2px !important; 
             }
             .p-line { 
                 font-weight: 900 !important;
-                margin: 4px 0;
+                margin: 4px 0 !important;
                 text-align: center !important;
-                letter-spacing: -1px;
+                letter-spacing: -1px !important;
             }
             .p-row { 
                 display: flex !important; 
                 justify-content: space-between !important; 
                 align-items: center !important;
                 font-weight: 900 !important; 
-                margin-bottom: 3px; 
+                margin-bottom: 3px !important; 
                 width: 100% !important;
             }
             .p-row span {
@@ -521,7 +525,7 @@
             const hitungCicilan = nominalBayar !== null ? (p.cicilanKe + 1) : p.cicilanKe;
 
             document.getElementById('areaCetakStruk').innerHTML = `
-                <!-- Logo Watermark ditarik keluar dari alur teks -->
+                <!-- Logo Watermark ditarik secara independen -->
                 <img src="https://lh3.googleusercontent.com/d/10_-FuQ11LYbaE_bf-6WI46sx8pUgerNq" class="p-watermark-logo">
                 
                 <!-- Seluruh Konten Teks Struk -->
