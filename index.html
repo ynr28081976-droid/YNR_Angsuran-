@@ -152,7 +152,6 @@
                 font-size: 11pt !important; 
                 line-height: 1.2 !important; 
                 font-weight: 900 !important; 
-                text-align: center !important;
                 text-transform: uppercase; 
                 box-sizing: border-box !important;
                 page-break-inside: avoid !important;
@@ -160,7 +159,7 @@
             }
 
             .p-center { 
-                text-align: center !important; 
+                text-align: center; 
                 font-weight: 900 !important; 
                 font-size: 13pt !important; 
                 margin-bottom: 4px !important; 
@@ -169,19 +168,18 @@
             .p-line { 
                 font-weight: 900 !important;
                 margin: 3px 0 !important;
-                text-align: center !important;
+                text-align: center;
                 font-size: 10pt !important;
                 letter-spacing: -1px;
             }
 
             .p-row { 
                 display: flex !important; 
-                justify-content: center !important; 
+                justify-content: space-between !important; 
                 font-weight: 900 !important; 
                 margin-bottom: 3px !important; 
-                text-align: center !important; 
+                text-align: left; 
                 font-size: 10.5pt !important; 
-                gap: 4px;
             }
 
             .p-logo-print {
@@ -563,9 +561,9 @@
                 <div class="p-row"><span>NAMA: ${bersihkanSimbol(p.nama.substring(0,14))}</span></div>
                 <div class="p-row"><span>BRG : ${bersihkanSimbol(p.barang.substring(0,14))}</span></div>
                 <div class="p-line">======================</div>
-                <div class="p-row"><span>HARGA JUAL : RP ${p.total.toLocaleString('id-ID')}</span></div>
-                <div class="p-row"><span>ANGSURAN : RP ${(nominalBayar || 0).toLocaleString('id-ID')}</span></div>
-                <div class="p-row"><span>SISA PIUTANG : RP ${sisaAkhir.toLocaleString('id-ID')}</span></div>
+                <div class="p-row"><span>HARGA JUAL</span> <span>: RP ${p.total.toLocaleString('id-ID')}</span></div>
+                <div class="p-row"><span>ANGSURAN</span> <span>: RP ${(nominalBayar || 0).toLocaleString('id-ID')}</span></div>
+                <div class="p-row"><span>SISA PIUTANG</span> <span>: RP ${sisaAkhir.toLocaleString('id-ID')}</span></div>
             `;
             setTimeout(() => { window.print(); }, 200);
         }
