@@ -109,59 +109,80 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(150px); } to { transform: translateY(0); } }
 
-       /* COMPACT THERMAL PRINT ENGINE */
-        @page { size: auto; margin: 0 !important; }
+        /* COMPACT THERMAL PRINT ENGINE */
+        @page { 
+            size: auto; 
+            margin: 0 !important; 
+        }
         @media print {
             html, body { 
                 background: #ffffff !important; 
                 color: #000000 !important; 
                 margin: 0 !important; 
                 padding: 0 !important; 
+                height: 100%;
+                overflow: hidden;
             }
             body * { display: none !important; }
-            #areaCetakStruk, #areaCetakStruk * { display: block !important; visibility: visible !important; }
+            #areaCetakStruk, #areaCetakStruk * { 
+                display: block !important; 
+                visibility: visible !important; 
+            }
             
             #areaCetakStruk { 
-                position: absolute; 
+                position: relative !important; 
                 left: 0; 
                 top: 0; 
                 width: 100%; 
-                max-width: 58mm; /* Sesuaikan dengan lebar kertas printer thermal (misal: 58mm atau 80mm) */
+                max-width: 58mm; /* Lebar kertas printer thermal standar */
                 color: #000000 !important; 
                 font-family: 'Courier New', Courier, monospace; 
-                font-size: 11pt; 
-                line-height: 1.3; 
-                font-weight: bold !important; 
-                padding: 4px; 
+                font-size: 10.5pt; 
+                line-height: 1.2; 
+                font-weight: 900 !important; 
+                padding: 6px 4px; 
                 margin: 0 auto !important;
                 text-transform: uppercase; 
-                text-align: center; /* Membuat seluruh isi teks berada di tengah */
+                box-sizing: border-box;
+                page-break-inside: avoid;
+                break-inside: avoid;
             }
+
+            /* Watermark Logo Samar di Tengah */
+            .p-watermark-logo {
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                width: 38mm !important;
+                height: auto !important;
+                opacity: 0.15 !important; /* Tingkat transparansi watermark */
+                z-index: 0 !important;
+                pointer-events: none;
+            }
+
+            .p-content {
+                position: relative !important;
+                z-index: 1 !important;
+            }
+
             .p-center { 
                 text-align: center; 
                 font-weight: 900 !important; 
-                font-size: 12pt; 
-                margin-bottom: 4px; 
+                font-size: 11.5pt; 
+                margin-bottom: 2px; 
             }
             .p-line { 
                 font-weight: 900 !important;
-                margin: 4px 0;
+                margin: 3px 0;
                 text-align: center;
+                letter-spacing: -1px;
             }
             .p-row { 
-                display: flex; 
-                justify-content: space-between; 
-                font-weight: bold !important; 
-                margin-bottom: 3px; 
-                text-align: left; /* Menjaga baris detail tetap rapi kiri-kanan */
-            }
-            .p-logo-print {
-                width: 30mm;
-                height: auto;
-                max-height: 20mm;
-                object-fit: contain;
-                margin: 0 auto 6px auto;
-                display: block;
+                display: flex !important; 
+                justify-content: space-between !important; 
+                font-weight: 900 !important; 
+                margin-bottom: 2px; 
             }
         }
     </style>
@@ -495,18 +516,21 @@
             const hitungCicilan = nominalBayar !== null ? (p.cicilanKe + 1) : p.cicilanKe;
 
             document.getElementById('areaCetakStruk').innerHTML = `
-                <div class="p-center">
-                    <img src="https://lh3.googleusercontent.com/d/10_-FuQ11LYbaE_bf-6WI46sx8pUgerNq" class="p-logo-print">
-                    YNR TOKO BAJU
+                <!-- Logo Watermark samar di tengah -->
+                <img src="https://lh3.googleusercontent.com/d/10_-FuQ11LYbaE_bf-6WI46sx8pUgerNq" class="p-watermark-logo">
+                
+                <!-- Konten Teks Struk -->
+                <div class="p-content">
+                    <div class="p-center">YNR TOKO BAJU</div>
+                    <div class="p-line">======================</div>
+                    <div class="p-row"><span>TGL: ${tanggal}</span> <span>KE: ${hitungCicilan}X</span></div>
+                    <div class="p-row"><span>NAMA: ${bersihkanSimbol(p.nama.substring(0,14))}</span></div>
+                    <div class="p-row"><span>BRG : ${bersihkanSimbol(p.barang.substring(0,14))}</span></div>
+                    <div class="p-line">======================</div>
+                    <div class="p-row"><span>HARGA JUAL</span> <span>: RP ${p.total.toLocaleString('id-ID')}</span></div>
+                    <div class="p-row"><span>ANGSURAN</span> <span>: RP ${(nominalBayar || 0).toLocaleString('id-ID')}</span></div>
+                    <div class="p-row"><span>SISA PIUTANG</span> <span>: RP ${sisaAkhir.toLocaleString('id-ID')}</span></div>
                 </div>
-                <div class="p-line">======================</div>
-                <div class="p-row"><span>TGL: ${tanggal}</span> <span>KE: ${hitungCicilan}X</span></div>
-                <div class="p-row"><span>NAMA: ${bersihkanSimbol(p.nama.substring(0,14))}</span></div>
-                <div class="p-row"><span>BRG : ${bersihkanSimbol(p.barang.substring(0,14))}</span></div>
-                <div class="p-line">======================</div>
-                <div class="p-row"><span>HARGA JUAL</span> <span>: RP ${p.total.toLocaleString('id-ID')}</span></div>
-                <div class="p-row"><span>ANGSURAN</span> <span>: RP ${(nominalBayar || 0).toLocaleString('id-ID')}</span></div>
-                <div class="p-row"><span>SISA PIUTANG</span> <span>: RP ${sisaAkhir.toLocaleString('id-ID')}</span></div>
             `;
             setTimeout(() => { window.print(); }, 200);
         }
