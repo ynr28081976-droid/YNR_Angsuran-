@@ -127,20 +127,18 @@
             body * { display: none !important; }
             
             #areaCetakStruk, #areaCetakStruk * { 
-                display: grid !important; 
+                display: block !important; 
                 visibility: visible !important; 
             }
             
             #areaCetakStruk { 
-                display: grid !important;
-                grid-template-columns: 1fr !important;
-                grid-template-rows: 1fr !important;
+                position: relative !important;
                 width: 60mm !important; 
                 height: 45mm !important;
                 color: #000000 !important; 
                 font-family: 'Courier New', Courier, monospace !important; 
                 font-size: 7.5pt !important; 
-                line-height: 1.15 !important; 
+                line-height: 1.2 !important; 
                 font-weight: 900 !important; 
                 padding: 2mm !important; 
                 margin: 0 !important;
@@ -151,7 +149,11 @@
 
             /* Watermark Logo Ditengah */
             .p-watermark-wrapper {
-                grid-area: 1 / 1 !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
@@ -160,15 +162,15 @@
             }
 
             .p-watermark-logo {
-                width: 28mm !important;
+                width: 25mm !important;
                 height: auto !important;
-                opacity: 0.18 !important;
+                opacity: 0.15 !important;
                 display: block !important;
             }
 
             /* Konten Teks */
             .p-content {
-                grid-area: 1 / 1 !important;
+                position: relative !important;
                 z-index: 2 !important;
                 display: flex !important;
                 flex-direction: column !important;
@@ -179,7 +181,7 @@
             .p-center { 
                 text-align: center !important; 
                 font-weight: 900 !important; 
-                font-size: 8.5pt !important; 
+                font-size: 8pt !important; 
                 margin-bottom: 1px !important; 
             }
             .p-line { 
@@ -196,6 +198,7 @@
                 font-weight: 900 !important; 
                 margin-bottom: 1px !important; 
                 width: 100% !important;
+                white-space: nowrap !important;
             }
             .p-row span {
                 display: inline-block !important;
@@ -532,22 +535,22 @@
             const hitungCicilan = nominalBayar !== null ? (p.cicilanKe + 1) : p.cicilanKe;
 
             document.getElementById('areaCetakStruk').innerHTML = `
-                <!-- Layer 1: Watermark Gambar di Sel 1x1 Grid -->
+                <!-- Layer 1: Watermark Gambar -->
                 <div class="p-watermark-wrapper">
                     <img src="https://lh3.googleusercontent.com/d/10_-FuQ11LYbaE_bf-6WI46sx8pUgerNq" class="p-watermark-logo">
                 </div>
                 
-                <!-- Layer 2: Konten Teks di Sel 1x1 Grid (Menimpa Gambar) -->
+                <!-- Layer 2: Konten Teks -->
                 <div class="p-content">
                     <div class="p-center">YNR TOKO BAJU</div>
-                    <div class="p-line">---------------------</div>
+                    <div class="p-line">-----------------------------</div>
                     <div class="p-row"><span>TGL: ${tanggal}</span><span>KE: ${hitungCicilan}X</span></div>
                     <div class="p-row"><span>NAMA: ${bersihkanSimbol(p.nama.substring(0,12))}</span></div>
                     <div class="p-row"><span>BRG : ${bersihkanSimbol(p.barang.substring(0,12))}</span></div>
-                    <div class="p-line">---------------------</div>
-                    <div class="p-row"><span>HARGA JUAL</span><span>: RP ${p.total.toLocaleString('id-ID')}</span></div>
-                    <div class="p-row"><span>ANGSURAN</span><span>: RP ${(nominalBayar || 0).toLocaleString('id-ID')}</span></div>
-                    <div class="p-row"><span>SISA PIUTANG</span><span>: RP ${sisaAkhir.toLocaleString('id-ID')}</span></div>
+                    <div class="p-line">-----------------------------</div>
+                    <div class="p-row"><span>HARGA JUAL</span><span>RP ${p.total.toLocaleString('id-ID')}</span></div>
+                    <div class="p-row"><span>ANGSURAN</span><span>RP ${(nominalBayar || 0).toLocaleString('id-ID')}</span></div>
+                    <div class="p-row"><span>SISA PIUTANG</span><span>RP ${sisaAkhir.toLocaleString('id-ID')}</span></div>
                 </div>
             `;
             setTimeout(() => { window.print(); }, 200);
