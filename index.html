@@ -109,10 +109,10 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(150px); } to { transform: translateY(0); } }
 
-        /* COMPACT THERMAL PRINT ENGINE */
+        /* FORMAT CETAK PRINTER THERMAL (PAS 1 HALAMAN) */
         @page { 
             size: auto; 
-            margin: 0 !important; 
+            margin: 0mm !important; 
         }
         @media print {
             html, body { 
@@ -134,13 +134,13 @@
                 left: 0; 
                 top: 0; 
                 width: 100%; 
-                max-width: 58mm; /* Lebar kertas printer thermal standar */
+                max-width: 58mm; /* Ukuran lebar standar kertas thermal */
                 color: #000000 !important; 
                 font-family: 'Courier New', Courier, monospace; 
-                font-size: 10.5pt; 
-                line-height: 1.2; 
+                font-size: 10pt; 
+                line-height: 1.3; 
                 font-weight: 900 !important; 
-                padding: 6px 4px; 
+                padding: 10px 4px; 
                 margin: 0 auto !important;
                 text-transform: uppercase; 
                 box-sizing: border-box;
@@ -148,15 +148,15 @@
                 break-inside: avoid;
             }
 
-            /* Watermark Logo Samar di Tengah */
+            /* Watermark Logo di Tengah Halaman Struk */
             .p-watermark-logo {
                 position: absolute !important;
                 top: 50% !important;
                 left: 50% !important;
                 transform: translate(-50%, -50%) !important;
-                width: 38mm !important;
+                width: 42mm !important;
                 height: auto !important;
-                opacity: 0.15 !important; /* Tingkat transparansi watermark */
+                opacity: 0.15 !important; /* Tingkat kejelasan watermark */
                 z-index: 0 !important;
                 pointer-events: none;
             }
@@ -167,22 +167,27 @@
             }
 
             .p-center { 
-                text-align: center; 
+                text-align: center !important; 
                 font-weight: 900 !important; 
-                font-size: 11.5pt; 
+                font-size: 11pt; 
                 margin-bottom: 2px; 
             }
             .p-line { 
                 font-weight: 900 !important;
-                margin: 3px 0;
-                text-align: center;
+                margin: 4px 0;
+                text-align: center !important;
                 letter-spacing: -1px;
             }
             .p-row { 
                 display: flex !important; 
                 justify-content: space-between !important; 
+                align-items: center !important;
                 font-weight: 900 !important; 
-                margin-bottom: 2px; 
+                margin-bottom: 3px; 
+                width: 100% !important;
+            }
+            .p-row span {
+                display: inline-block !important;
             }
         }
     </style>
@@ -516,20 +521,20 @@
             const hitungCicilan = nominalBayar !== null ? (p.cicilanKe + 1) : p.cicilanKe;
 
             document.getElementById('areaCetakStruk').innerHTML = `
-                <!-- Logo Watermark samar di tengah -->
+                <!-- Logo Watermark ditarik keluar dari alur teks -->
                 <img src="https://lh3.googleusercontent.com/d/10_-FuQ11LYbaE_bf-6WI46sx8pUgerNq" class="p-watermark-logo">
                 
-                <!-- Konten Teks Struk -->
+                <!-- Seluruh Konten Teks Struk -->
                 <div class="p-content">
                     <div class="p-center">YNR TOKO BAJU</div>
                     <div class="p-line">======================</div>
-                    <div class="p-row"><span>TGL: ${tanggal}</span> <span>KE: ${hitungCicilan}X</span></div>
+                    <div class="p-row"><span>TGL: ${tanggal}</span><span>KE: ${hitungCicilan}X</span></div>
                     <div class="p-row"><span>NAMA: ${bersihkanSimbol(p.nama.substring(0,14))}</span></div>
                     <div class="p-row"><span>BRG : ${bersihkanSimbol(p.barang.substring(0,14))}</span></div>
                     <div class="p-line">======================</div>
-                    <div class="p-row"><span>HARGA JUAL</span> <span>: RP ${p.total.toLocaleString('id-ID')}</span></div>
-                    <div class="p-row"><span>ANGSURAN</span> <span>: RP ${(nominalBayar || 0).toLocaleString('id-ID')}</span></div>
-                    <div class="p-row"><span>SISA PIUTANG</span> <span>: RP ${sisaAkhir.toLocaleString('id-ID')}</span></div>
+                    <div class="p-row"><span>HARGA JUAL</span><span>: RP ${p.total.toLocaleString('id-ID')}</span></div>
+                    <div class="p-row"><span>ANGSURAN</span><span>: RP ${(nominalBayar || 0).toLocaleString('id-ID')}</span></div>
+                    <div class="p-row"><span>SISA PIUTANG</span><span>: RP ${sisaAkhir.toLocaleString('id-ID')}</span></div>
                 </div>
             `;
             setTimeout(() => { window.print(); }, 200);
