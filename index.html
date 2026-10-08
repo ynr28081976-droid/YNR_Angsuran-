@@ -125,10 +125,10 @@
             width: 320px;
             background: #ffffff;
             color: #000000;
-            padding: 15px;
+            padding: 10px 12px;
             font-family: 'Arial Black', 'Impact', Arial, sans-serif;
-            font-size: 11pt;
-            line-height: 1.3;
+            font-size: 9.5pt; /* Ukuran teks diperkecil sedikit */
+            line-height: 1.25;
             font-weight: 900;
             text-transform: uppercase;
             box-sizing: border-box;
@@ -142,8 +142,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 200px;
-            height: 200px;
+            width: 170px;
+            height: 170px;
             background-image: url('https://lh3.googleusercontent.com/d/10_-FuQ11LYbaE_bf-6WI46sx8pUgerNq');
             background-size: contain;
             background-repeat: no-repeat;
@@ -157,10 +157,10 @@
             z-index: 1;
         }
 
-        .p-header { text-align: center; font-weight: 900; font-size: 14pt; margin-bottom: 8px; letter-spacing: 0.5px; }
-        .p-row { text-align: left; font-weight: 900; margin-bottom: 4px; font-size: 10.5pt; white-space: nowrap; }
-        .p-footer { text-align: center; font-weight: 900; font-size: 10pt; margin-top: 8px; }
-        .p-spacer { height: 6px; }
+        .p-header { text-align: center; font-weight: 900; font-size: 12pt; margin-bottom: 6px; letter-spacing: 0.5px; }
+        .p-row { text-align: left; font-weight: 900; margin-bottom: 3px; font-size: 9pt; white-space: nowrap; }
+        .p-footer { text-align: center; font-weight: 900; font-size: 8.5pt; margin-top: 6px; }
+        .p-spacer { height: 4px; }
 
         /* THERMAL PRINT ENGINE 58MM */
         @page { size: 58mm auto; margin: 0mm !important; }
@@ -170,8 +170,8 @@
             body > *:not(#areaCetakStruk) { display: none !important; }
             #areaCetakStruk { 
                 position: relative !important; left: 0 !important; top: 0 !important;
-                width: 100% !important; max-width: 58mm !important; margin: 0 auto !important; padding: 2mm 0mm !important;
-                -webkit-text-stroke: 0.4px #000000;
+                width: 100% !important; max-width: 58mm !important; margin: 0 auto !important; padding: 1mm 0mm !important;
+                -webkit-text-stroke: 0.3px #000000;
             }
         }
     </style>
@@ -472,7 +472,7 @@
             container.innerHTML = `
                 <div class="opt-row opt-edit" onclick="tutupSheet('actionSheet'); isiDataKeFormulir(${p.rowNum});">✏️ Modifikasi Data Profil</div>
                 <div class="opt-row opt-print" onclick="tutupSheet('actionSheet'); printStrukKasir(${p.rowNum});">𖖛️ Cetak Ulang Struk Thermal</div>
-                <div class="opt-row opt-wa" onclick="tutupSheet('actionSheet'); bagikanStrukGambarWA(${p.rowNum});">📲 Kirim Struk Gambar ke WA</div>
+                <div class="opt-row opt-wa" onclick="tutupSheet('actionSheet'); kirimStrukTeksWA(${p.rowNum});">📲 Kirim Struk Teks ke WA</div>
                 <div class="opt-row opt-del" onclick="tutupSheet('actionSheet'); hapusBarisPelanggan(${p.rowNum});">🗑️ Hapus Rekor Permanen</div>
             `;
             bukaSheet('actionSheet');
@@ -553,8 +553,8 @@
                 <div class="p-header">YNR TOKO BAJU</div>
                 <div class="p-row">TGL : ${tanggal}</div>
                 <div class="p-row">KE  : ${hitungCicilan}X</div>
-                <div class="p-row">NAMA: ${bersihkanSimbol(p.nama.substring(0, 16))}</div>
-                <div class="p-row">BRG : ${bersihkanSimbol(p.barang.substring(0, 16))}</div>
+                <div class="p-row">NAMA: ${bersihkanSimbol(p.nama.substring(0, 18))}</div>
+                <div class="p-row">BRG : ${bersihkanSimbol(p.barang.substring(0, 18))}</div>
                 <div class="p-spacer"></div>
                 <div class="p-row">HARGA JUAL  : RP ${p.total.toLocaleString('id-ID')}</div>
                 <div class="p-row">ANGSURAN    : RP ${nominalCetak.toLocaleString('id-ID')}</div>
@@ -572,50 +572,30 @@
             }
         }
 
-        /* FUNGSI BAGIKAN STRUK BERBENTUK GAMBAR KE WA */
-        async function bagikanStrukGambarWA(rowNum) {
-            const p = siapkanAreaStrukHTML(rowNum);
+        /* FUNGSI KIRIM NOTA FORMAT TEKS LANGSUNG KE WA */
+        function kirimStrukTeksWA(rowNum) {
+            const p = cacheDataLokal.find(x => x.rowNum === rowNum);
             if(!p) return;
 
-            document.getElementById('loadingText').style.display = "block";
+            const tanggal = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            
+            let nominalCetak = p.bayarTerakhir ? p.bayarTerakhir : (p.tenor > 0 ? Math.ceil(p.total / p.tenor) : 0);
 
-            try {
-                const area = document.getElementById('areaCetakStruk');
-                
-                // Konversi elemen HTML struk menjadi Canvas Gambar
-                const canvas = await html2canvas(area, {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: "#ffffff"
-                });
+            const pesanWA = `*YNR ANGSURAN TOKO BAJU*\n` +
+                `------------------------------------\n` +
+                `*Tanggal* : ${tanggal}\n` +
+                `*Nama*    : ${p.nama}\n` +
+                `*Barang*  : ${p.barang}\n` +
+                `*Angsuran Ke* : ${p.cicilanKe} / ${p.tenor}x\n` +
+                `------------------------------------\n` +
+                `*Harga Jual*  : Rp ${p.total.toLocaleString('id-ID')}\n` +
+                `*Bayar*       : Rp ${nominalCetak.toLocaleString('id-ID')}\n` +
+                `*SISA UTANG*  : *Rp ${p.sisa.toLocaleString('id-ID')}*\n` +
+                `------------------------------------\n` +
+                `_Terima kasih telah berbelanja di YNR Toko Baju!_`;
 
-                canvas.toBlob(async (blob) => {
-                    const file = new File([blob], `Struk_${p.nama}.png`, { type: 'image/png' });
-
-                    // Memeriksa fitur bawaan HP untuk langsung share file gambar
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        await navigator.share({
-                            title: `Struk Angsuran ${p.nama}`,
-                            text: `Halo *${p.nama}*, berikut adalah bukti pembayaran angsuran dari YNR Toko Baju. Sisa piutang Anda: *Rp ${p.sisa.toLocaleString('id-ID')}*. Terima kasih!`,
-                            files: [file]
-                        });
-                    } else {
-                        // Opsi Alternatif: Download Gambar & Buka WhatsApp
-                        const link = document.createElement('a');
-                        link.href = URL.createObjectURL(blob);
-                        link.download = `Struk_${p.nama}.png`;
-                        link.click();
-
-                        const pesanWA = encodeURIComponent(`Halo *${p.nama}*, berikut bukti pembayaran angsuran YNR Toko Baju. Sisa piutang Anda: *Rp ${p.sisa.toLocaleString('id-ID')}*.\n\n_(Gambar struk otomatis terunduh di HP Anda, silakan lampirkan gambar tersebut)_`);
-                        window.open(`https://wa.me/?text=${pesanWA}`, '_blank');
-                    }
-                    document.getElementById('loadingText').style.display = "none";
-                }, 'image/png');
-
-            } catch (err) {
-                alert("Gagal membuat gambar struk.");
-                document.getElementById('loadingText').style.display = "none";
-            }
+            const urlWA = `https://wa.me/?text=${encodeURIComponent(pesanWA)}`;
+            window.open(urlWA, '_blank');
         }
 
         async function hapusBarisPelanggan(rowNum) {
