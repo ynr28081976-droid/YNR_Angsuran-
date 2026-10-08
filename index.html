@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>YNR Angsuran Toko Baju</title>
+    <!-- Pustaka untuk ubah HTML ke Gambar PNG -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --bg-app: #0b0f19;
@@ -101,6 +103,7 @@
         .opt-row { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 14px; font-weight: 700; font-size: 13px; margin-bottom: 10px; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; }
         .opt-edit { background: rgba(251, 191, 36, 0.08); color: #fbbf24; border-color: rgba(251, 191, 36, 0.15); }
         .opt-print { background: rgba(99, 102, 241, 0.08); color: #818cf8; border-color: rgba(99, 102, 241, 0.15); }
+        .opt-download { background: rgba(16, 185, 129, 0.08); color: #34d399; border-color: rgba(16, 185, 129, 0.15); }
         .opt-del { background: rgba(244, 63, 94, 0.08); color: #f43f5e; border-color: rgba(244, 63, 94, 0.15); }
         .opt-row:active { transform: scale(0.98); }
 
@@ -109,106 +112,70 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(150px); } to { transform: translateY(0); } }
 
-        /* CONFIG CETAK DENGAN UKURAN PRESISI 6cm x 4.5cm PAS 1 HALAMAN */
-        @page { 
-            size: 60mm 45mm; 
-            margin: 0mm !important; 
+        /* STYLES KHUSUS AREA STRUK TEMPORARY (Untuk Render Gambar & Print) */
+        #areaCetakStruk {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            width: 300px;
+            background: #ffffff;
+            color: #000000;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11px;
+            line-height: 1.3;
+            font-weight: 900;
+            padding: 12px;
+            box-sizing: border-box;
+            text-transform: uppercase;
         }
+
+        .p-watermark-wrapper {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1; pointer-events: none;
+        }
+        .p-watermark-logo {
+            width: 140px; height: auto;
+            opacity: 0.15; display: block;
+        }
+        .p-content {
+            position: relative; z-index: 2;
+            display: flex; flex-direction: column;
+        }
+        .p-center { text-align: center; font-weight: 900; font-size: 13px; margin-bottom: 2px; }
+        .p-line { font-weight: 900; margin: 2px 0; text-align: center; letter-spacing: -1px; font-size: 11px; }
+        .p-row { display: flex; justify-content: space-between; align-items: center; font-weight: 900; margin-bottom: 2px; width: 100%; white-space: nowrap; }
+
+        /* CONFIG CETAK Thermal 60mm x 45mm Pas 1 Halaman */
+        @page { size: 60mm 45mm; margin: 0mm !important; }
         @media print {
             html, body { 
-                background: #ffffff !important; 
-                color: #000000 !important; 
-                margin: 0 !important; 
-                padding: 0 !important; 
-                width: 60mm !important;
-                height: 45mm !important;
-                overflow: hidden !important;
+                background: #ffffff !important; color: #000000 !important; 
+                margin: 0 !important; padding: 0 !important; 
+                width: 60mm !important; height: 45mm !important; 
+                overflow: hidden !important; 
             }
             body * { display: none !important; }
             
-            #areaCetakStruk, #areaCetakStruk * { 
-                display: block !important; 
-                visibility: visible !important; 
-            }
+            #areaCetakStruk, #areaCetakStruk * { display: block !important; visibility: visible !important; }
             
             #areaCetakStruk { 
-                position: relative !important;
-                width: 60mm !important; 
-                height: 45mm !important;
-                color: #000000 !important; 
-                font-family: 'Courier New', Courier, monospace !important; 
-                font-size: 7.5pt !important; 
-                line-height: 1.2 !important; 
-                font-weight: 900 !important; 
-                padding: 2mm !important; 
-                margin: 0 !important;
-                text-transform: uppercase !important; 
-                box-sizing: border-box !important;
-                overflow: hidden !important;
+                position: relative !important; left: 0 !important; top: 0 !important;
+                width: 60mm !important; height: 45mm !important;
+                font-size: 7.5pt !important; line-height: 1.2 !important; padding: 2mm !important; 
             }
-
-            /* Watermark Logo Ditengah */
-            .p-watermark-wrapper {
-                position: absolute !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
-                height: 100% !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                z-index: 1 !important;
-                pointer-events: none !important;
-            }
-
-            .p-watermark-logo {
-                width: 25mm !important;
-                height: auto !important;
-                opacity: 0.15 !important;
-                display: block !important;
-            }
-
-            /* Konten Teks */
-            .p-content {
-                position: relative !important;
-                z-index: 2 !important;
-                display: flex !important;
-                flex-direction: column !important;
-                justify-content: center !important;
-                background: transparent !important;
-            }
-
-            .p-center { 
-                text-align: center !important; 
-                font-weight: 900 !important; 
-                font-size: 8pt !important; 
-                margin-bottom: 1px !important; 
-            }
-            .p-line { 
-                font-weight: 900 !important;
-                margin: 1px 0 !important;
-                text-align: center !important;
-                letter-spacing: -1px !important;
-                font-size: 7pt !important;
-            }
-            .p-row { 
-                display: flex !important; 
-                justify-content: space-between !important; 
-                align-items: center !important;
-                font-weight: 900 !important; 
-                margin-bottom: 1px !important; 
-                width: 100% !important;
-                white-space: nowrap !important;
-            }
-            .p-row span {
-                display: inline-block !important;
-            }
+            .p-watermark-logo { width: 25mm !important; }
+            .p-center { font-size: 8pt !important; }
+            .p-line { font-size: 7pt !important; }
+            .p-row { display: flex !important; justify-content: space-between !important; }
         }
     </style>
 </head>
 <body>
 
-    <div id="areaCetakStruk" style="display: none;"></div>
+    <div id="areaCetakStruk"></div>
 
     <button class="fab-add" onclick="bukaFormTambah()">＋</button>
 
@@ -472,6 +439,7 @@
             container.innerHTML = `
                 <div class="opt-row opt-edit" onclick="tutupSheet('actionSheet'); isiDataKeFormulir(${p.rowNum});">✏️ Modifikasi Data Profil</div>
                 <div class="opt-row opt-print" onclick="tutupSheet('actionSheet'); printStrukKasir(${p.rowNum}, null, null);">𖖛️ Cetak Ulang Struk Thermal</div>
+                <div class="opt-row opt-download" onclick="tutupSheet('actionSheet'); downloadGambarStruk(${p.rowNum}, null, null);">📥 Download Gambar Struk (PNG)</div>
                 <div class="opt-row opt-del" onclick="tutupSheet('actionSheet'); hapusBarisPelanggan(${p.rowNum});">🗑️ Hapus Rekor Permanen</div>
             `;
             bukaSheet('actionSheet');
@@ -526,21 +494,20 @@
             } catch (err) { alert("Sinkronisasi Ditolak Cloud."); }
         }
 
-        function printStrukKasir(rowNum, nominalBayar = null, sisaBaru = null) {
+        // FUNGSI UTAMA GENERATE STRUK HTML
+        function siapkanElemenStruk(rowNum, nominalBayar = null, sisaBaru = null) {
             const p = cacheDataLokal.find(x => x.rowNum === rowNum);
-            if(!p) return;
+            if(!p) return null;
 
             const tanggal = new Date().toLocaleDateString('id-ID', { year: '2-digit', month: '2-digit', day: '2-digit' });
             const sisaAkhir = sisaBaru !== null ? parseInt(sisaBaru) : p.sisa;
             const hitungCicilan = nominalBayar !== null ? (p.cicilanKe + 1) : p.cicilanKe;
 
-            document.getElementById('areaCetakStruk').innerHTML = `
-                <!-- Layer 1: Watermark Gambar -->
+            const target = document.getElementById('areaCetakStruk');
+            target.innerHTML = `
                 <div class="p-watermark-wrapper">
-                    <img src="https://lh3.googleusercontent.com/d/10_-FuQ11LYbaE_bf-6WI46sx8pUgerNq" class="p-watermark-logo">
+                    <img src="https://lh3.googleusercontent.com/d/10_-FuQ11LYbaE_bf-6WI46sx8pUgerNq" class="p-watermark-logo" crossorigin="anonymous">
                 </div>
-                
-                <!-- Layer 2: Konten Teks -->
                 <div class="p-content">
                     <div class="p-center">YNR TOKO BAJU</div>
                     <div class="p-line">-----------------------------</div>
@@ -553,7 +520,36 @@
                     <div class="p-row"><span>SISA PIUTANG</span><span>RP ${sisaAkhir.toLocaleString('id-ID')}</span></div>
                 </div>
             `;
-            setTimeout(() => { window.print(); }, 200);
+            return { p, tanggal };
+        }
+
+        // FUNGSI PRINT STRUK
+        function printStrukKasir(rowNum, nominalBayar = null, sisaBaru = null) {
+            if(siapkanElemenStruk(rowNum, nominalBayar, sisaBaru)) {
+                setTimeout(() => { window.print(); }, 200);
+            }
+        }
+
+        // FUNGSI DOWNLOAD STRUK JADI GAMBAR PNG
+        function downloadGambarStruk(rowNum, nominalBayar = null, sisaBaru = null) {
+            const info = siapkanElemenStruk(rowNum, nominalBayar, sisaBaru);
+            if(!info) return;
+
+            const target = document.getElementById('areaCetakStruk');
+            
+            // Konversi area HTML struk menjadi Canvas Gambar
+            html2canvas(target, {
+                useCORS: true,
+                scale: 3, // Kualitas gambar HD/Jernih
+                backgroundColor: "#ffffff"
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Struk_${info.p.nama.replace(/\s+/g, '_')}.png`;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+            }).catch(err => {
+                alert("Gagal mengunduh gambar struk.");
+            });
         }
 
         async function hapusBarisPelanggan(rowNum) {
