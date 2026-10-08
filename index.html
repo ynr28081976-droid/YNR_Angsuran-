@@ -114,7 +114,7 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(150px); } to { transform: translateY(0); } }
 
-        /* THERMAL PRINT ENGINE 58MM - TEBAL, JELAS, DAN FOOTER LENGKAP */
+        /* THERMAL PRINT ENGINE 58MM - TEBAL & DENGAN LOGO WATERMARK DI TENGAH */
         @page { 
             size: 58mm auto; 
             margin: 0mm !important; 
@@ -162,6 +162,25 @@
                 border: none !important;
                 box-shadow: none !important;
                 -webkit-text-stroke: 0.4px #000000;
+            }
+
+            /* LOGO WATERMARK DI TENGAH STRUK */
+            #areaCetakStruk::before {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 42mm;
+                height: 42mm;
+                background-image: url('https://lh3.googleusercontent.com/d/10_-FuQ11LYbaE_bf-6WI46sx8pUgerNq');
+                background-size: contain;
+                background-repeat: no-repeat;
+                background-position: center;
+                opacity: 0.18;
+                z-index: -1;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
 
             .p-header { 
@@ -492,7 +511,7 @@
             const container = document.getElementById('actionOptionsContainer');
             container.innerHTML = `
                 <div class="opt-row opt-edit" onclick="tutupSheet('actionSheet'); isiDataKeFormulir(${p.rowNum});">✏️ Modifikasi Data Profil</div>
-                <div class="opt-row opt-print" onclick="tutupSheet('actionSheet'); printStrukKasir(${p.rowNum}, null, null);">𖖛️ Cetak Ulang Struk Thermal</div>
+                <div class="opt-row opt-print" onclick="tutupSheet('actionSheet'); printStrukKasir(${p.rowNum});">𖖛️ Cetak Ulang Struk Thermal</div>
                 <div class="opt-row opt-del" onclick="tutupSheet('actionSheet'); hapusBarisPelanggan(${p.rowNum});">🗑️ Hapus Rekor Permanen</div>
             `;
             bukaSheet('actionSheet');
@@ -513,6 +532,10 @@
                 
                 if (result.error) return alert(result.error);
                 
+                // Simpan nominal pembayaran terakhir di cache lokal
+                const p = cacheDataLokal.find(x => x.rowNum === rowNum);
+                if (p) p.bayarTerakhir = nominal;
+
                 if(confirm(`Sukses Masuk Rp ${nominal.toLocaleString('id-ID')}! Print Nota Kasir?`)) {
                     printStrukKasir(rowNum, nominal, result.hasilBayar.sisa);
                 }
@@ -547,13 +570,24 @@
             } catch (err) { alert("Sinkronisasi Ditolak Cloud."); }
         }
 
-        /* FUNGSI CETAK STRUK THERMAL 58MM - DENGAN PESAN FOOTER */
+        /* FUNGSI CETAK STRUK THERMAL 58MM */
         function printStrukKasir(rowNum, nominalBayar = null, sisaBaru = null) {
             const p = cacheDataLokal.find(x => x.rowNum === rowNum);
             if(!p) return;
 
             const tanggal = new Date().toLocaleDateString('id-ID', { year: '2-digit', month: '2-digit', day: '2-digit' });
             const sisaAkhir = sisaBaru !== null ? parseInt(sisaBaru) : p.sisa;
+            
+            // Menggunakan nominal bayar baru, nominal bayar terakhir, atau estimasi cicilan per sesi
+            let nominalCetak = 0;
+            if (nominalBayar !== null) {
+                nominalCetak = nominalBayar;
+            } else if (p.bayarTerakhir) {
+                nominalCetak = p.bayarTerakhir;
+            } else {
+                nominalCetak = p.tenor > 0 ? Math.ceil(p.total / p.tenor) : 0;
+            }
+
             const hitungCicilan = nominalBayar !== null ? (p.cicilanKe + 1) : p.cicilanKe;
 
             document.getElementById('areaCetakStruk').innerHTML = `
@@ -564,7 +598,7 @@
                 <div class="p-row">BRG : ${bersihkanSimbol(p.barang.substring(0, 16))}</div>
                 <div class="p-spacer"></div>
                 <div class="p-row">HARGA JUAL  : RP ${p.total.toLocaleString('id-ID')}</div>
-                <div class="p-row">ANGSURAN    : RP ${(nominalBayar || 0).toLocaleString('id-ID')}</div>
+                <div class="p-row">ANGSURAN    : RP ${nominalCetak.toLocaleString('id-ID')}</div>
                 <div class="p-row">SISA PIUTANG: RP ${sisaAkhir.toLocaleString('id-ID')}</div>
                 <div class="p-spacer"></div>
                 <div class="p-footer">BUKTI PEMBAYARAN</div>
