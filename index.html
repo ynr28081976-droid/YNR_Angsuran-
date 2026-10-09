@@ -194,6 +194,7 @@
 
         /* Action Menu */
         .opt-row { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 14px; font-weight: 700; font-size: 13px; margin-bottom: 10px; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; }
+        .opt-history { background: rgba(99, 102, 241, 0.08); color: #a5b4fc; border-color: rgba(99, 102, 241, 0.15); }
         .opt-add-item { background: rgba(16, 185, 129, 0.08); color: #34d399; border-color: rgba(16, 185, 129, 0.15); }
         .opt-edit { background: rgba(251, 191, 36, 0.08); color: #fbbf24; border-color: rgba(251, 191, 36, 0.15); }
         .opt-print { background: rgba(99, 102, 241, 0.08); color: #818cf8; border-color: rgba(99, 102, 241, 0.15); }
@@ -277,6 +278,21 @@
 
     <button id="fabAdd" class="fab-add" onclick="bukaFormTambah()">＋</button>
 
+    <!-- SHEET RIWAYAT PEMBAYARAN -->
+    <div id="historySheet" class="bottom-sheet" onclick="tutupSheet('historySheet')">
+        <div class="sheet-content" onclick="event.stopPropagation()">
+            <div class="sheet-header">
+                <h3 id="historySheetTitle">📜 Riwayat Pembayaran</h3>
+                <button class="btn-close-sheet" onclick="tutupSheet('historySheet')">✕</button>
+            </div>
+            <textarea id="textHistoryPembayaran" class="rekap-textarea" readonly></textarea>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-mobile btn-m-menu" style="max-width:100%; flex:1; padding:14px;" onclick="salinTeksHistory()">📋 Salin Bukti</button>
+                <button class="btn-mobile btn-m-pay" style="flex:1; padding:14px;" onclick="kirimHistoryKeWA()">📲 Kirim ke WA</button>
+            </div>
+        </div>
+    </div>
+
     <!-- SHEET REKAP UTANG -->
     <div id="rekapSheet" class="bottom-sheet" onclick="tutupSheet('rekapSheet')">
         <div class="sheet-content" onclick="event.stopPropagation()">
@@ -357,6 +373,7 @@
             <form id="pelangganForm" class="form-flex" onsubmit="simpanDataKeSistem(event)">
                 <input type="hidden" id="rowNum">
                 <input type="hidden" id="cicilanKe" value="0">
+                <input type="hidden" id="riwayatBayarTek" value="">
                 
                 <div class="input-group">
                     <label>Nama Pelanggan (Autocomplete)</label>
@@ -552,9 +569,11 @@
                 document.getElementById('alamat').value = ditemukan.alamat;
                 document.getElementById('rowNum').value = ditemukan.rowNum;
                 document.getElementById('cicilanKe').value = ditemukan.cicilanKe;
+                document.getElementById('riwayatBayarTek').value = ditemukan.riwayatBayar || "";
             } else {
                 document.getElementById('rowNum').value = "";
                 document.getElementById('cicilanKe').value = "0";
+                document.getElementById('riwayatBayarTek').value = "";
             }
         }
 
@@ -705,6 +724,7 @@
             document.getElementById('actionSheetTitle').innerText = `${p.nama}`;
             const container = document.getElementById('actionOptionsContainer');
             container.innerHTML = `
+                <div class="opt-row opt-history" onclick="tutupSheet('actionSheet'); lihatRiwayatPembayaranPelanggan(${p.rowNum});">📜 Riwayat Pembayaran</div>
                 <div class="opt-row opt-add-item" onclick="tutupSheet('actionSheet'); bukaModalTambahBarangCepat(${p.rowNum});">➕ Tambah Ambil Barang</div>
                 <div class="opt-row opt-edit" onclick="tutupSheet('actionSheet'); isiDataKeFormulir(${p.rowNum});">✏️ Modifikasi Data Profil</div>
                 <div class="opt-row opt-print" onclick="tutupSheet('actionSheet'); printStrukKasir(${p.rowNum});">𖖛️ Cetak Ulang Struk Thermal</div>
@@ -712,6 +732,53 @@
                 <div class="opt-row opt-del" onclick="tutupSheet('actionSheet'); hapusBarisPelanggan(${p.rowNum});">🗑️ Hapus Rekor Permanen</div>
             `;
             bukaSheet('actionSheet');
+        }
+
+        /* FUNGSI LIHAT RIWAYAT PEMBAYARAN PER PELANGGAN */
+        function lihatRiwayatPembayaranPelanggan(rowNum) {
+            const p = cacheDataLokal.find(x => x.rowNum === rowNum);
+            if (!p) return;
+
+            document.getElementById('historySheetTitle').innerText = `📜 Riwayat: ${p.nama}`;
+            
+            let teks = `=======================================\n`;
+            teks += `RIWAYAT PEMBAYARAN PELANGGAN\n`;
+            teks += `=======================================\n`;
+            teks += `NAMA   : ${p.nama.toUpperCase()}\n`;
+            teks += `ALAMAT : ${p.alamat}\n`;
+            teks += `TOTAL POKOK: Rp ${p.total.toLocaleString('id-ID')}\n`;
+            teks += `SISA UTANG : Rp ${p.sisa.toLocaleString('id-ID')}\n`;
+            teks += `---------------------------------------\n`;
+            teks += `DAFTAR SETORAN / PEMBAYARAN:\n`;
+
+            if (p.riwayatBayar && p.riwayatBayar.trim().length > 0) {
+                const list = p.riwayatBayar.split('\n');
+                list.forEach((item, idx) => {
+                    if (item.trim().length > 0) {
+                        teks += `${idx + 1}. ${item.trim()}\n`;
+                    }
+                });
+            } else {
+                teks += `(Belum ada riwayat pembayaran tercatat)\n`;
+            }
+
+            teks += `=======================================`;
+
+            document.getElementById('textHistoryPembayaran').value = teks;
+            bukaSheet('historySheet');
+        }
+
+        function salinTeksHistory() {
+            const area = document.getElementById('textHistoryPembayaran');
+            area.select();
+            document.execCommand('copy');
+            alert("Bukti riwayat pembayaran berhasil disalin!");
+        }
+
+        function kirimHistoryKeWA() {
+            const teks = document.getElementById('textHistoryPembayaran').value;
+            const url = `https://wa.me/?text=${encodeURIComponent(teks)}`;
+            window.open(url, '_blank');
         }
 
         function bukaModalTambahBarangCepat(rowNum) {
@@ -752,7 +819,8 @@
                 tipeTenor: p.tipe,
                 tenor: p.tenor,
                 cicilanKe: p.cicilanKe,
-                sisaUtang: sisaBaru
+                sisaUtang: sisaBaru,
+                riwayatBayar: p.riwayatBayar || ""
             };
 
             try {
@@ -771,14 +839,28 @@
             tutupSheet('paySheet');
             document.getElementById('loadingText').style.display = "block";
 
+            const tglSkrg = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const p = cacheDataLokal.find(x => x.rowNum === rowNum);
+            
+            // Catat log riwayat bayar baru
+            const entriBayarBaru = `${tglSkrg} | Bayar Rp ${nominal.toLocaleString('id-ID')}`;
+            const riwayatBaru = p && p.riwayatBayar ? `${p.riwayatBayar}\n${entriBayarBaru}` : entriBayarBaru;
+
             try {
-                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "bayarManual", rowNum: rowNum, nominal: nominal }) });
+                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ 
+                    action: "bayarManual", 
+                    rowNum: rowNum, 
+                    nominal: nominal,
+                    riwayatBayar: riwayatBaru 
+                }) });
                 const result = await response.json();
                 
                 if (result.error) return alert(result.error);
                 
-                const p = cacheDataLokal.find(x => x.rowNum === rowNum);
-                if (p) p.bayarTerakhir = nominal;
+                if (p) {
+                    p.bayarTerakhir = nominal;
+                    p.riwayatBayar = riwayatBaru;
+                }
 
                 if(confirm(`Sukses Masuk Rp ${nominal.toLocaleString('id-ID')}! Print Nota Kasir?`)) {
                     printStrukKasir(rowNum, nominal, result.hasilBayar.sisa);
@@ -807,19 +889,23 @@
             let rincianGabungan = "";
             let totalBaru = 0;
             let sisaBaru = 0;
+            let riwayatTercatat = "";
 
             if (rowNum) {
                 rincianGabungan = barangInput;
                 totalBaru = hargaInput;
                 sisaBaru = parseInt(document.getElementById('sisaUtang').value);
+                riwayatTercatat = document.getElementById('riwayatBayarTek').value;
             } else if (pelangganEksis) {
                 rincianGabungan = `${pelangganEksis.barang}\n${tglSkrg} | ${barangInput} (Rp ${hargaInput.toLocaleString('id-ID')})`;
                 totalBaru = pelangganEksis.total + hargaInput;
                 sisaBaru = pelangganEksis.sisa + hargaInput;
+                riwayatTercatat = pelangganEksis.riwayatBayar || "";
             } else {
                 rincianGabungan = `${tglSkrg} | ${barangInput} (Rp ${hargaInput.toLocaleString('id-ID')})`;
                 totalBaru = hargaInput;
                 sisaBaru = hargaInput;
+                riwayatTercatat = "";
             }
 
             const payload = {
@@ -831,7 +917,8 @@
                 tipeTenor: document.getElementById('tipeTenor').value,
                 tenor: parseInt(document.getElementById('tenor').value),
                 cicilanKe: parseInt(document.getElementById('cicilanKe').value || 0),
-                sisaUtang: sisaBaru
+                sisaUtang: sisaBaru,
+                riwayatBayar: riwayatTercatat
             };
 
             try {
@@ -927,6 +1014,7 @@
             document.getElementById('tenor').value = p.tenor;
             document.getElementById('cicilanKe').value = p.cicilanKe;
             document.getElementById('sisaUtang').value = p.sisa;
+            document.getElementById('riwayatBayarTek').value = p.riwayatBayar || "";
             
             document.getElementById('formTitle').innerText = "✏️ Perbarui Data Profil";
             kalkulasiOtomatisTenor();
@@ -937,6 +1025,7 @@
             document.getElementById('pelangganForm').reset();
             document.getElementById('rowNum').value = "";
             document.getElementById('cicilanKe').value = "0";
+            document.getElementById('riwayatBayarTek').value = "";
             document.getElementById('formTitle').innerText = "📝 Catat Ambil Barang / Utang Baru";
             kalkulasiOtomatisTenor();
         }
