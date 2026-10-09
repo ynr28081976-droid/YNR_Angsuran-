@@ -734,39 +734,53 @@
             bukaSheet('actionSheet');
         }
 
-        /* FUNGSI LIHAT RIWAYAT PEMBAYARAN PER PELANGGAN */
-        function lihatRiwayatPembayaranPelanggan(rowNum) {
-            const p = cacheDataLokal.find(x => x.rowNum === rowNum);
-            if (!p) return;
+        /* FUNGSI LIHAT RIWAYAT LENGKAP (BARANG + SETORAN) */
+function lihatRiwayatPembayaranPelanggan(rowNum) {
+    const p = cacheDataLokal.find(x => x.rowNum === rowNum);
+    if (!p) return;
 
-            document.getElementById('historySheetTitle').innerText = `📜 Riwayat: ${p.nama}`;
-            
-            let teks = `=======================================\n`;
-            teks += `RIWAYAT PEMBAYARAN PELANGGAN\n`;
-            teks += `=======================================\n`;
-            teks += `NAMA   : ${p.nama.toUpperCase()}\n`;
-            teks += `ALAMAT : ${p.alamat}\n`;
-            teks += `TOTAL POKOK: Rp ${p.total.toLocaleString('id-ID')}\n`;
-            teks += `SISA UTANG : Rp ${p.sisa.toLocaleString('id-ID')}\n`;
-            teks += `---------------------------------------\n`;
-            teks += `DAFTAR SETORAN / PEMBAYARAN:\n`;
+    document.getElementById('historySheetTitle').innerText = `📜 Riwayat: ${p.nama}`;
+    
+    let teks = `=======================================\n`;
+    teks += `RIWAYAT TRANSAKSI & PEMBAYARAN\n`;
+    teks += `=======================================\n`;
+    teks += `NAMA   : ${p.nama.toUpperCase()}\n`;
+    teks += `ALAMAT : ${p.alamat}\n`;
+    teks += `TOTAL POKOK: Rp ${p.total.toLocaleString('id-ID')}\n`;
+    teks += `SISA UTANG : Rp ${p.sisa.toLocaleString('id-ID')}\n`;
+    teks += `---------------------------------------\n`;
+    teks += `RINCIAN BARANG YANG DIAMBIL:\n`;
 
-            if (p.riwayatBayar && p.riwayatBayar.trim().length > 0) {
-                const list = p.riwayatBayar.split('\n');
-                list.forEach((item, idx) => {
-                    if (item.trim().length > 0) {
-                        teks += `${idx + 1}. ${item.trim()}\n`;
-                    }
-                });
-            } else {
-                teks += `(Belum ada riwayat pembayaran tercatat)\n`;
+    if (p.barang && p.barang.trim().length > 0) {
+        const listBarang = p.barang.split('\n');
+        listBarang.forEach((item, idx) => {
+            if (item.trim().length > 0) {
+                teks += `${idx + 1}. ${item.trim()}\n`;
             }
+        });
+    } else {
+        teks += `(Belum ada catatan barang)\n`;
+    }
 
-            teks += `=======================================`;
+    teks += `---------------------------------------\n`;
+    teks += `DAFTAR SETORAN / PEMBAYARAN:\n`;
 
-            document.getElementById('textHistoryPembayaran').value = teks;
-            bukaSheet('historySheet');
-        }
+    if (p.riwayatBayar && p.riwayatBayar.trim().length > 0) {
+        const listBayar = p.riwayatBayar.split('\n');
+        listBayar.forEach((item, idx) => {
+            if (item.trim().length > 0) {
+                teks += `${idx + 1}. ${item.trim()}\n`;
+            }
+        });
+    } else {
+        teks += `(Belum ada riwayat pembayaran tercatat)\n`;
+    }
+
+    teks += `=======================================`;
+
+    document.getElementById('textHistoryPembayaran').value = teks;
+    bukaSheet('historySheet');
+}
 
         function salinTeksHistory() {
             const area = document.getElementById('textHistoryPembayaran');
