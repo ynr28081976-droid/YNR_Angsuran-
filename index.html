@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>YNR Angsuran Toko Baju</title>
-    <!-- Library html2canvas untuk mengubah HTML Struk menjadi Gambar -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
@@ -26,7 +25,7 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-app); color: var(--text-main); font-size: 14px; padding-bottom: 90px; }
-        .container { padding: 16px; max-width: 480px; margin: 0 auto; display: none; } /* Disembunyikan sampai login */
+        .container { padding: 16px; max-width: 480px; margin: 0 auto; display: none; }
 
         /* LOGIN SCREEN STYLING */
         #loginScreen {
@@ -81,13 +80,33 @@
         .login-error { color: #f43f5e; font-size: 11px; margin-top: 10px; display: none; font-weight: 600; }
 
         /* Top Bar Styling */
-        .app-bar { display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 16px; border-radius: 20px; box-shadow: var(--shadow-premium); margin-bottom: 20px; border: 1px solid var(--border-color); }
+        .app-bar { display: flex; justify-content: space-between; align-items: center; background: var(--surface); padding: 16px; border-radius: 20px; box-shadow: var(--shadow-premium); margin-bottom: 16px; border: 1px solid var(--border-color); }
         .app-bar-brand { display: flex; align-items: center; gap: 10px; }
         .app-bar-logo { width: 38px; height: 38px; border-radius: 10px; object-fit: cover; }
         .app-bar h1 { font-size: 15px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(135deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .sync-badge { font-size: 11px; padding: 4px 12px; border-radius: 20px; font-weight: 700; background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
         .btn-sync-icon { background: rgba(99, 102, 241, 0.1); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.2); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; transition: all 0.2s; }
         .btn-sync-icon:active { transform: rotate(180deg); background: rgba(99, 102, 241, 0.2); }
+
+        /* Tombol Rekap Utama */
+        .btn-rekap-utama {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            border-radius: 16px;
+            color: #fbbf24;
+            font-weight: 800;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            box-shadow: var(--shadow-premium);
+        }
+        .btn-rekap-utama:active { transform: scale(0.98); }
 
         /* Dashboard Widget */
         .stats-scroller { display: flex; gap: 12px; overflow-x: auto; margin-bottom: 20px; padding-bottom: 4px; scrollbar-width: none; }
@@ -140,8 +159,8 @@
         .form-flex { display: flex; flex-direction: column; gap: 14px; }
         .input-group { display: flex; flex-direction: column; gap: 6px; }
         .input-group label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-        .input-group input, .input-group select { background: var(--surface-card); border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 14px; font-size: 13px; color: #fff; outline: none; width: 100%; transition: all 0.2s; }
-        .input-group input:focus { border-color: #6366f1; background: #1e293b; box-shadow: var(--shadow-glow); }
+        .input-group input, .input-group select, .input-group textarea { background: var(--surface-card); border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 14px; font-size: 13px; color: #fff; outline: none; width: 100%; transition: all 0.2s; }
+        .input-group input:focus, .input-group textarea:focus { border-color: #6366f1; background: #1e293b; box-shadow: var(--shadow-glow); }
         .live-banner { background: rgba(99, 102, 241, 0.1); border: 1px dashed rgba(99, 102, 241, 0.3); padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; color: #a5b4fc; text-align: center; }
 
         /* Pay Sheet Custom Input & Grid */
@@ -156,8 +175,26 @@
         .btn-coin:disabled { opacity: 0.2; cursor: not-allowed; }
         .btn-coin-lunas { grid-column: span 3; background: var(--gradient-emerald); color: white; border: none; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 13px; text-align: center; margin-top: 6px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); cursor: pointer; }
 
+        /* Rekap Box Styling */
+        .rekap-textarea {
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            background: #0d1321;
+            color: #34d399;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 14px;
+            width: 100%;
+            height: 280px;
+            resize: none;
+            outline: none;
+            margin-bottom: 14px;
+        }
+
         /* Action Menu */
         .opt-row { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 14px; font-weight: 700; font-size: 13px; margin-bottom: 10px; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; }
+        .opt-add-item { background: rgba(16, 185, 129, 0.08); color: #34d399; border-color: rgba(16, 185, 129, 0.15); }
         .opt-edit { background: rgba(251, 191, 36, 0.08); color: #fbbf24; border-color: rgba(251, 191, 36, 0.15); }
         .opt-print { background: rgba(99, 102, 241, 0.08); color: #818cf8; border-color: rgba(99, 102, 241, 0.15); }
         .opt-wa { background: rgba(16, 185, 129, 0.08); color: #34d399; border-color: rgba(16, 185, 129, 0.15); }
@@ -240,6 +277,46 @@
 
     <button id="fabAdd" class="fab-add" onclick="bukaFormTambah()">＋</button>
 
+    <!-- SHEET REKAP UTANG -->
+    <div id="rekapSheet" class="bottom-sheet" onclick="tutupSheet('rekapSheet')">
+        <div class="sheet-content" onclick="event.stopPropagation()">
+            <div class="sheet-header">
+                <h3>📋 Rekap Utang Pelanggan</h3>
+                <button class="btn-close-sheet" onclick="tutupSheet('rekapSheet')">✕</button>
+            </div>
+            <textarea id="textRekapUtang" class="rekap-textarea" readonly></textarea>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-mobile btn-m-menu" style="max-width:100%; flex:1; padding:14px;" onclick="salinTeksRekap()">📋 Salin Teks</button>
+                <button class="btn-mobile btn-m-pay" style="flex:1; padding:14px;" onclick="kirimRekapKeWA()">📲 Kirim ke WA</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SHEET MODAL TAMBAH BARANG CEPAT -->
+    <div id="addBarangSheet" class="bottom-sheet" onclick="tutupSheet('addBarangSheet')">
+        <div class="sheet-content" onclick="event.stopPropagation()">
+            <div class="sheet-header">
+                <h3 id="addBarangTitle">➕ Tambah Ambil Barang</h3>
+                <button class="btn-close-sheet" onclick="tutupSheet('addBarangSheet')">✕</button>
+            </div>
+            <form class="form-flex" onsubmit="eksekusiTambahBarangCepat(event)">
+                <input type="hidden" id="addBarangRowNum">
+                
+                <div class="input-group">
+                    <label>Nama Barang / Kasbon Baru Hari Ini</label>
+                    <input type="text" id="addNamaBarang" placeholder="Contoh: Kopi Bubuk 2 Bungkus" required oninput="kapitalisasiSmart(this)">
+                </div>
+
+                <div class="input-group">
+                    <label>Harga Barang Baru (Rp)</label>
+                    <input type="number" id="addHargaBarang" placeholder="Contoh: 40000" required>
+                </div>
+
+                <button type="submit" class="btn-mobile btn-m-pay" style="padding:15px; font-size:13px; margin-top:4px;">💾 <b>Tambahkan ke Rincian Utang</b></button>
+            </form>
+        </div>
+    </div>
+
     <div id="paySheet" class="bottom-sheet" onclick="tutupSheet('paySheet')">
         <div class="sheet-content" onclick="event.stopPropagation()">
             <div class="sheet-header">
@@ -274,7 +351,7 @@
     <div id="formSheet" class="bottom-sheet" onclick="tutupSheet('formSheet')">
         <div class="sheet-content" onclick="event.stopPropagation()">
             <div class="sheet-header">
-                <h3 id="formTitle">📝 Tambah Konsumen Baru</h3>
+                <h3 id="formTitle">📝 Catat Ambil Barang / Utang Baru</h3>
                 <button class="btn-close-sheet" onclick="tutupSheet('formSheet')">✕</button>
             </div>
             <form id="pelangganForm" class="form-flex" onsubmit="simpanDataKeSistem(event)">
@@ -282,20 +359,21 @@
                 <input type="hidden" id="cicilanKe" value="0">
                 
                 <div class="input-group">
-                    <label>Nama Lengkap</label>
-                    <input type="text" id="nama" placeholder="Masukkan nama" required oninput="kapitalisasiSmart(this)">
+                    <label>Nama Pelanggan (Autocomplete)</label>
+                    <input type="text" id="nama" list="daftarNamaPelanggan" placeholder="Ketik nama (misal: PAK BUDI)" required onchange="cekPilihNamaOtomatis(this.value)" oninput="kapitalisasiSmart(this)">
+                    <datalist id="daftarNamaPelanggan"></datalist>
                 </div>
                 <div class="input-group">
                     <label>Alamat Rumah</label>
                     <input type="text" id="alamat" placeholder="Masukkan lokasi" required oninput="kapitalisasiSmart(this)">
                 </div>
                 <div class="input-group">
-                    <label>Nama Barang / Pakaian</label>
-                    <input type="text" id="barang" placeholder="Item baju / celana" required oninput="kapitalisasiSmart(this)">
+                    <label>Nama Barang / Kasbon Baru</label>
+                    <textarea id="barang" placeholder="Masukkan nama barang yang diambil" rows="2" required></textarea>
                 </div>
                 <div class="input-group">
-                    <label>Harga Pembiayaan Jual (Rp)</label>
-                    <input type="number" id="totalHarga" placeholder="Contoh: 500000" required oninput="kalkulasiOtomatisTenor()">
+                    <label>Harga / Nominal Utang Baru (Rp)</label>
+                    <input type="number" id="totalHarga" placeholder="Contoh: 50000" required oninput="kalkulasiOtomatisTenor()">
                 </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                     <div class="input-group">
@@ -308,7 +386,7 @@
                     </div>
                     <div class="input-group">
                         <label>Tenor (Kali)</label>
-                        <input type="number" id="tenor" placeholder="Berapa kali" required oninput="kalkulasiOtomatisTenor()">
+                        <input type="number" id="tenor" value="1" placeholder="Berapa kali" required oninput="kalkulasiOtomatisTenor()">
                     </div>
                 </div>
                 <div class="input-group">
@@ -316,7 +394,7 @@
                     <input type="number" id="sisaUtang" required>
                 </div>
                 <div id="textAngsuran" class="live-banner">Angsuran berkala: Rp 0</div>
-                <button type="submit" id="btnSubmit" class="btn-mobile btn-m-pay" style="padding:15px; font-size:13px; margin-top:4px;">💾 <b>Simpan Konsumen</b></button>
+                <button type="submit" id="btnSubmit" class="btn-mobile btn-m-pay" style="padding:15px; font-size:13px; margin-top:4px;">💾 <b>Simpan Transaksi</b></button>
             </form>
         </div>
     </div>
@@ -333,6 +411,8 @@
                 <button class="btn-sync-icon" onclick="logoutSistem()" title="Kunci Aplikasi" style="background:rgba(244,63,94,0.1); color:#f43f5e; border-color:rgba(244,63,94,0.2);">🔒</button>
             </div>
         </div>
+
+        <button class="btn-rekap-utama" onclick="bukaRekapUtang()">📋 REKAP UTANG / KASBON BARANG</button>
 
         <div class="stats-scroller">
             <div class="stat-bubble danger-glow">
@@ -444,6 +524,7 @@
                 document.getElementById('rasioPelunasan').innerText = total > 0 ? Math.round((lunas / total) * 100) + "%" : "0%";
 
                 cacheDataLokal = result.pelanggan;
+                perbaruiDatalistAutocomplete();
                 jalankanPencarianLokal();
 
                 ind.innerText = "ONLINE"; ind.style.background = "rgba(16, 185, 129, 0.1)"; ind.style.color = "#10b981";
@@ -451,6 +532,29 @@
                 ind.innerText = "ERROR"; ind.style.background = "rgba(244, 63, 94, 0.1)"; ind.style.color = "#f43f5e";
             } finally {
                 document.getElementById('loadingText').style.display = "none";
+            }
+        }
+
+        /* AUTOCOMPLETE SISI CLIENT */
+        function perbaruiDatalistAutocomplete() {
+            const dl = document.getElementById('daftarNamaPelanggan');
+            dl.innerHTML = "";
+            cacheDataLokal.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.nama;
+                dl.appendChild(opt);
+            });
+        }
+
+        function cekPilihNamaOtomatis(namaInput) {
+            const ditemukan = cacheDataLokal.find(p => p.nama.toLowerCase() === namaInput.toLowerCase());
+            if (ditemukan) {
+                document.getElementById('alamat').value = ditemukan.alamat;
+                document.getElementById('rowNum').value = ditemukan.rowNum;
+                document.getElementById('cicilanKe').value = ditemukan.cicilanKe;
+            } else {
+                document.getElementById('rowNum').value = "";
+                document.getElementById('cicilanKe').value = "0";
             }
         }
 
@@ -487,7 +591,7 @@
                         <span class="status-tag ${p.status === 'AKTIF' ? 'tag-aktif' : 'tag-lunas'}">${p.status}</span>
                     </div>
                     <div class="card-body">
-                        <div><div class="info-label">Barang</div><div class="info-val" style="color:#60a5fa">${p.barang}</div></div>
+                        <div><div class="info-label">Rincian Barang</div><div class="info-val" style="color:#60a5fa; white-space:pre-line;">${p.barang}</div></div>
                         <div><div class="info-label">Total Pokok</div><div class="info-val">Rp ${p.total.toLocaleString('id-ID')}</div></div>
                         <div><div class="info-label">Sesi Angsuran</div><div class="info-val">${p.cicilanKe} / ${p.tenor}x (${p.tipe[0]})</div></div>
                         <div><div class="info-label">Sisa Dana</div><div class="info-val danger">Rp ${p.sisa.toLocaleString('id-ID')}</div></div>
@@ -499,6 +603,53 @@
                 `;
                 feed.appendChild(card);
             });
+        }
+
+        function bukaRekapUtang() {
+            const daftarAktif = cacheDataLokal.filter(p => p.status === "AKTIF" && p.sisa > 0);
+
+            if (daftarAktif.length === 0) {
+                alert("Tidak ada tagihan utang aktif saat ini!");
+                return;
+            }
+
+            let teks = `=======================================\n`;
+            teks += `REKAP UTANG / KASBON BARANG\n`;
+            teks += `=======================================\n\n`;
+
+            daftarAktif.forEach((p, index) => {
+                teks += `${index + 1}. NAMA: ${p.nama.toUpperCase()}\n`;
+                teks += `   Total Utang: Rp ${p.sisa.toLocaleString('id-ID')}\n`;
+                teks += `   Rincian:\n`;
+                
+                const barisItem = p.barang.split('\n');
+                barisItem.forEach(b => {
+                    if(b.trim().length > 0) teks += `   - ${b.trim()}\n`;
+                });
+
+                teks += `\n`;
+                if (index < daftarAktif.length - 1) {
+                    teks += `---------------------------------------\n\n`;
+                }
+            });
+
+            teks += `=======================================`;
+
+            document.getElementById('textRekapUtang').value = teks;
+            bukaSheet('rekapSheet');
+        }
+
+        function salinTeksRekap() {
+            const area = document.getElementById('textRekapUtang');
+            area.select();
+            document.execCommand('copy');
+            alert("Teks rekap utang berhasil disalin!");
+        }
+
+        function kirimRekapKeWA() {
+            const teks = document.getElementById('textRekapUtang').value;
+            const url = `https://wa.me/?text=${encodeURIComponent(teks)}`;
+            window.open(url, '_blank');
         }
 
         function bukaModalBayarSmart(rowNum) {
@@ -554,12 +705,61 @@
             document.getElementById('actionSheetTitle').innerText = `${p.nama}`;
             const container = document.getElementById('actionOptionsContainer');
             container.innerHTML = `
+                <div class="opt-row opt-add-item" onclick="tutupSheet('actionSheet'); bukaModalTambahBarangCepat(${p.rowNum});">➕ Tambah Ambil Barang</div>
                 <div class="opt-row opt-edit" onclick="tutupSheet('actionSheet'); isiDataKeFormulir(${p.rowNum});">✏️ Modifikasi Data Profil</div>
                 <div class="opt-row opt-print" onclick="tutupSheet('actionSheet'); printStrukKasir(${p.rowNum});">𖖛️ Cetak Ulang Struk Thermal</div>
                 <div class="opt-row opt-wa" onclick="tutupSheet('actionSheet'); kirimStrukTeksWA(${p.rowNum});">📲 Kirim Struk Teks ke WA</div>
                 <div class="opt-row opt-del" onclick="tutupSheet('actionSheet'); hapusBarisPelanggan(${p.rowNum});">🗑️ Hapus Rekor Permanen</div>
             `;
             bukaSheet('actionSheet');
+        }
+
+        function bukaModalTambahBarangCepat(rowNum) {
+            const p = cacheDataLokal.find(x => x.rowNum === rowNum);
+            if(!p) return;
+
+            document.getElementById('addBarangRowNum').value = p.rowNum;
+            document.getElementById('addBarangTitle').innerText = `➕ Tambah Barang: ${p.nama}`;
+            document.getElementById('addNamaBarang').value = "";
+            document.getElementById('addHargaBarang').value = "";
+
+            bukaSheet('addBarangSheet');
+        }
+
+        async function eksekusiTambahBarangCepat(e) {
+            e.preventDefault();
+            tutupSheet('addBarangSheet');
+            document.getElementById('loadingText').style.display = "block";
+
+            const rowNum = parseInt(document.getElementById('addBarangRowNum').value);
+            const p = cacheDataLokal.find(x => x.rowNum === rowNum);
+            if (!p) return;
+
+            const tglSkrg = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const barangBaru = bersihkanSimbol(document.getElementById('addNamaBarang').value.trim());
+            const hargaBaru = parseInt(document.getElementById('addHargaBarang').value) || 0;
+
+            const rincianGabungan = `${p.barang}\n${tglSkrg} | ${barangBaru} (Rp ${hargaBaru.toLocaleString('id-ID')})`;
+            const totalBaru = p.total + hargaBaru;
+            const sisaBaru = p.sisa + hargaBaru;
+
+            const payload = {
+                rowNum: p.rowNum,
+                nama: p.nama,
+                alamat: p.alamat,
+                barang: rincianGabungan,
+                totalHarga: totalBaru,
+                tipeTenor: p.tipe,
+                tenor: p.tenor,
+                cicilanKe: p.cicilanKe,
+                sisaUtang: sisaBaru
+            };
+
+            try {
+                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "simpanData", data: payload }) });
+                alert(await response.json());
+                ambilDataDariCloud();
+            } catch (err) { alert("Sinkronisasi Ditolak Cloud."); }
         }
 
         function bukaFormTambah() {
@@ -595,16 +795,43 @@
             tutupSheet('formSheet');
             document.getElementById('loadingText').style.display = "block";
 
+            const tglSkrg = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const nama = bersihkanSimbol(document.getElementById('nama').value.trim());
+            const alamat = bersihkanSimbol(document.getElementById('alamat').value.trim());
+            const barangInput = bersihkanSimbol(document.getElementById('barang').value.trim());
+            const hargaInput = parseInt(document.getElementById('totalHarga').value) || 0;
+            const rowNum = document.getElementById('rowNum').value;
+
+            const pelangganEksis = cacheDataLokal.find(p => p.nama.toLowerCase() === nama.toLowerCase());
+
+            let rincianGabungan = "";
+            let totalBaru = 0;
+            let sisaBaru = 0;
+
+            if (rowNum) {
+                rincianGabungan = barangInput;
+                totalBaru = hargaInput;
+                sisaBaru = parseInt(document.getElementById('sisaUtang').value);
+            } else if (pelangganEksis) {
+                rincianGabungan = `${pelangganEksis.barang}\n${tglSkrg} | ${barangInput} (Rp ${hargaInput.toLocaleString('id-ID')})`;
+                totalBaru = pelangganEksis.total + hargaInput;
+                sisaBaru = pelangganEksis.sisa + hargaInput;
+            } else {
+                rincianGabungan = `${tglSkrg} | ${barangInput} (Rp ${hargaInput.toLocaleString('id-ID')})`;
+                totalBaru = hargaInput;
+                sisaBaru = hargaInput;
+            }
+
             const payload = {
-                rowNum: parseInt(document.getElementById('rowNum').value || 0),
-                nama: bersihkanSimbol(document.getElementById('nama').value),
-                alamat: bersihkanSimbol(document.getElementById('alamat').value),
-                barang: bersihkanSimbol(document.getElementById('barang').value),
-                totalHarga: parseInt(document.getElementById('totalHarga').value),
+                rowNum: rowNum ? parseInt(rowNum) : (pelangganEksis ? pelangganEksis.rowNum : 0),
+                nama: nama,
+                alamat: alamat,
+                barang: rincianGabungan,
+                totalHarga: totalBaru,
                 tipeTenor: document.getElementById('tipeTenor').value,
                 tenor: parseInt(document.getElementById('tenor').value),
                 cicilanKe: parseInt(document.getElementById('cicilanKe').value || 0),
-                sisaUtang: parseInt(document.getElementById('sisaUtang').value)
+                sisaUtang: sisaBaru
             };
 
             try {
@@ -666,7 +893,7 @@
                 `------------------------------------\n` +
                 `*Tanggal* : ${tanggal}\n` +
                 `*Nama*    : ${p.nama}\n` +
-                `*Barang*  : ${p.barang}\n` +
+                `*Barang*  :\n${p.barang}\n` +
                 `*Angsuran Ke* : ${p.cicilanKe} / ${p.tenor}x\n` +
                 `------------------------------------\n` +
                 `*Harga Jual*  : Rp ${p.total.toLocaleString('id-ID')}\n` +
@@ -710,7 +937,7 @@
             document.getElementById('pelangganForm').reset();
             document.getElementById('rowNum').value = "";
             document.getElementById('cicilanKe').value = "0";
-            document.getElementById('formTitle').innerText = "📝 Tambah Konsumen Baru";
+            document.getElementById('formTitle').innerText = "📝 Catat Ambil Barang / Utang Baru";
             kalkulasiOtomatisTenor();
         }
     </script>
